@@ -1,0 +1,171 @@
+# Quick Start Guide
+
+Get up and running with DistQat in 5 minutes!
+
+## Prerequisites
+
+- Python 3.10+
+- CUDA- or ROCM-capable GPU (recommended)
+- Linux OS
+
+## 1. Installation
+
+```bash
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create environment
+uv venv --python=3.10
+source .venv/bin/activate
+
+# Install dependencies
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu129
+uv pip install .
+```
+
+## 2. Local Training
+
+```bash
+python run_local.py --config-path configs/resnet18.yaml
+```
+
+## 3. Distributed Training
+
+### On Machine 1 (Coordinator):
+
+```bash
+export PUBLIC_IP="YOUR_PUBLIC_IP"
+python start_trainer_client.py --public-ip ${PUBLIC_IP}
+
+# Wait a few seconds, then get the peer address:
+cat logs/resnet18/initial_peers.txt
+```
+
+### On Machine 2+ (Workers):
+
+```bash
+export PUBLIC_IP="YOUR_PUBLIC_IP"
+export INITIAL_PEERS="<peer_address_from_machine_1>"
+
+python start_servers.py \
+    --public-ip "${PUBLIC_IP}" \
+    --num-servers 2 \
+    --initial-peers "${INITIAL_PEERS}"
+```
+
+## 4. SkyPilot Deployment
+
+DistQat ships ready-to-run SkyPilot specs for cloud fleets. Review the [SkyPilot server setup guide](SKYPILOT_SERVER_SETUP.md) to prepare the API server and credentials.
+
+```bash
+export WANDB_API_KEY=<your_wandb_token>
+
+# First rollout
+sky launch -c distqat-trainer ./skypilot/start_trainer_client.yaml --secret WANDB_API_KEY
+sky launch -c distqat-servers ./skypilot/start_servers.yaml \
+  --env NUM_SERVERS=2 \
+  --env INITIAL_PEERS="/ip4/<trainer_public_ip>/tcp/50000/p2p/<peer_id>" \
+  --secret WANDB_API_KEY
+
+# Subsequent runs (reuse setup)
+sky launch -c distqat-trainer ./skypilot/start_trainer_client.yaml --secret WANDB_API_KEY --no-setup
+sky launch -c distqat-servers ./skypilot/start_servers.yaml \
+  --env NUM_SERVERS=2 \
+  --env INITIAL_PEERS="/ip4/<trainer_public_ip>/tcp/50000/p2p/<peer_id>" \
+  --secret WANDB_API_KEY --no-setup
+```
+
+## Common Issues
+
+### Leftover Processes
+```bash
+pkill -f distqat
+```
+
+### Port in Use
+```bash
+kill -9 $(lsof -t -i:50000)
+```
+
+### CUDA Out-of-memory
+Edit `configs/resnet18.yaml`:
+```yaml
+diloco:
+  batch_size_per_step: 16  # Reduce from 64
+```
+
+## Next Steps
+
+- Read the [full README](README.md) for detailed documentation
+- Check [configuration guide](README.md#configuration) to customize training
+- See [examples](README.md#examples) for different models
+- Review [troubleshooting](README.md#troubleshooting-faq) for common issues
+
+## File Structure
+
+```
+distqat/
+├── configs/                 # YAML configuration files
+│   ├── resnet18.yaml       # Default config
+│   ├── distilgpt2.yaml     # Language model config
+│   └── ...
+├── src/distqat/
+│   ├── distributed/
+│   │   ├── monitor.py      # DHT monitoring
+│   │   ├── client.py       # Trainer orchestration
+│   │   ├── server.py       # Expert hosting
+│   │   └── trainer.py      # Training execution
+│   └── models/             # Model definitions
+├── start_trainer_client.py # Launch coordinator
+├── start_servers.py        # Launch workers
+└── logs/                   # Training logs (created at runtime)
+```
+
+## Monitoring Training
+
+### Check Logs
+```bash
+# Monitor logs
+tail -f logs/resnet18/client.log
+tail -f logs/resnet18/server_*.log
+
+# Watch WandB dashboard (if configured)
+# Visit https://wandb.ai/your-entity/distqat
+```
+
+### Verify Training is Running
+Look for these messages in client logs:
+
+```
+INFO: Found expert front.0.0.0 at 0.0.0.0:65297
+INFO: Complete pipelines: 2 - [0, 1]
+INFO:  Spawned trainer 0 with PID 2508688
+INFO: Trainer 0 Step #100 loss = 2.34567 sps = 12.5
+```
+
+## Stop Training
+
+```bash
+# Ctrl+C in the terminal running the process
+
+# Or kill all processes
+pkill -f distqat
+
+# Clean up ports if needed
+kill -9 $(lsof -t -i:50000)
+kill -9 $(lsof -t -i:50500)
+kill -9 $(lsof -t -i:51000)
+kill -9 $(lsof -t -i:52555)
+```
+
+## Test Failover
+
+```bash
+python test_failover.py --public-ip ${PUBLIC_IP}
+```
+
+This script automatically tests the failover mechanism by killing a server and verifying recovery.
+
+---
+
+**Need Help?** See the [Troubleshooting & FAQ](README.md#troubleshooting-faq) section in the main README.

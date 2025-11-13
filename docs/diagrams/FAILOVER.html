@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Failover Mechanism Diagram &#8212; DistQat  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/mermaid@10.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Training Flow Diagram" href="TRAINING_FLOW.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="failover-mechanism-diagram">
+<h1>Failover Mechanism Diagram<a class="headerlink" href="#failover-mechanism-diagram" title="Link to this heading">¶</a></h1>
+<div class="mermaid">
+            stateDiagram-v2
+    [*] --&gt; Healthy: Server starts
+    Healthy --&gt; No_Heartbeat: Server fails
+    No_Heartbeat --&gt; Incomplete_Pipeline: Client monitors pool
+    Incomplete_Pipeline --&gt; New_Server_Joins: 
+    New_Server_Joins --&gt; Fills_missing_stage: Auto-discovery
+    Fills_missing_stage --&gt; Registering: Load latest params
+    Registering --&gt; Healthy: Register in DHT
+    
+    note right of Healthy
+        Sends Heartbeat to DHT
+    end note
+    
+    note right of New_Server_Joins
+        Scans DHT for missing
+        stage indices
+    end note
+        </div><section id="failure-timeline">
+<h2>Failure Timeline<a class="headerlink" href="#failure-timeline" title="Link to this heading">¶</a></h2>
+<div class="mermaid">
+            gantt
+    title Server Failover Timeline
+    dateFormat ss
+    axisFormat %S
+    
+    section Training
+    Normal operation    :active, train1, 00, 20s
+    Failure detected    :crit, fail1, 20, 5s
+    Waiting for recovery :wait1, 25, 15s
+    Resume training     :active, train2, 40, 20s
+    
+    section Server A (front.0.0.0)
+    Running             :active, sa1, 00, 60s
+    
+    section Server B (back.0.0.0)
+    Running             :active, sb1, 00, 20s
+    Failed              :crit, sb2, 20, 20s
+    
+    section Server C (back.0.0.0)
+    Joining DHT         :join, 25, 5s
+    Loading parameters from peers  :load, 30, 5s
+    Registering         :reg, 35, 5s
+    Running             :active, sc1, 40, 20s
+        </div></section>
+<section id="topology-changes">
+<h2>Topology Changes<a class="headerlink" href="#topology-changes" title="Link to this heading">¶</a></h2>
+<div class="mermaid">
+            flowchart TB
+    %% Timeline step labels
+    label0([Before Failure ])
+    label1([During Failure ])
+    label2([After Recovery ])
+
+    %% Before Failure (t=0)
+    subgraph Before_Failure
+        direction LR
+        A1[&quot;Trainer 1&quot;]
+        B1[&quot;Server A&lt;br/&gt;front.0.0.0&quot;]
+        C1[&quot;Server B&lt;br/&gt;back.0.0.0&quot;]
+        A1 --&gt; B1
+        B1 --&gt; C1
+    end
+
+    %% During Failure (t=20)
+    subgraph During_Failure
+        direction LR
+        A2[&quot;Trainer 1&lt;br/&gt;⚠️ Waiting&quot;]
+        B2[&quot;Server A&lt;br/&gt;front.0.0.0&quot;]
+        C2[&quot;Server B&lt;br/&gt;back.0.0.0&lt;br/&gt;❌ FAILED&quot;]
+        A2 -.timeout.-&gt; B2
+        B2 -.failed.-&gt; C2
+    end
+
+    %% After Recovery (t=40)
+    subgraph After_Recovery
+        direction LR
+        A3[&quot;Trainer 1&lt;br/&gt;✓ Restarted&quot;]
+        B3[&quot;Server A&lt;br/&gt;front.0.0.0&quot;]
+        C3[&quot;Server C&lt;br/&gt;back.0.0.0&lt;br/&gt;✓ NEW&quot;]
+        A3 --&gt; B3
+        B3 --&gt; C3
+    end
+
+    %% Align the subgraphs vertically via invisible links and labels for strict ordering
+    label0 -.-&gt; Before_Failure
+    Before_Failure -.-&gt; label1
+    label1 -.-&gt; During_Failure
+    During_Failure -.-&gt; label2
+    label2 -.-&gt; After_Recovery
+
+    %% Visual grouping by timeline
+    classDef before fill:#ebf8ff,stroke:#3182ce,stroke-width:2px;
+    classDef failure fill:#fff5f5,stroke:#e53e3e,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef recovery fill:#f0fff4,stroke:#38a169,stroke-width:2px;
+
+    class Before_Failure before;
+    class During_Failure failure;
+    class After_Recovery recovery;
+
+    %% Optional: clickable labels
+    click label0 &quot;#&quot;
+    click label1 &quot;#&quot;
+    click label2 &quot;#&quot;
+        </div></section>
+<section id="failover-process-steps">
+<h2>Failover Process Steps<a class="headerlink" href="#failover-process-steps" title="Link to this heading">¶</a></h2>
+<section id="failure-detection">
+<h3>1. Failure Detection<a class="headerlink" href="#failure-detection" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Server</span> <span class="n">fails</span> <span class="ow">and</span> <span class="n">thus</span> <span class="n">stops</span> <span class="n">updating</span> <span class="n">its</span> <span class="n">heartbeat</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">DHT</span>
+<span class="n">Client</span> <span class="n">continuously</span> <span class="n">monitors</span> <span class="n">the</span> <span class="n">DHT</span> <span class="k">for</span> <span class="n">running</span> <span class="n">servers</span>
+<span class="n">Notices</span> <span class="n">a</span> <span class="n">server</span> <span class="n">failed</span> <span class="ow">and</span> <span class="n">a</span> <span class="n">pipeline</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">incomplete</span>
+</pre></div>
+</div>
+</section>
+<section id="expert-removal">
+<h3>2. Expert Removal<a class="headerlink" href="#expert-removal" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Client</span> <span class="n">stops</span> <span class="n">trainer</span> <span class="k">for</span> <span class="n">that</span> <span class="n">pipeline</span>
+</pre></div>
+</div>
+</section>
+<section id="auto-discovery">
+<h3>3. Auto-Discovery<a class="headerlink" href="#auto-discovery" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">New</span> <span class="n">Server</span> <span class="n">C</span> <span class="n">starts</span>
+<span class="n">Connect</span> <span class="n">to</span> <span class="n">DHT</span> <span class="n">via</span> <span class="n">initial_peers</span>
+<span class="n">Query</span> <span class="n">DHT</span> <span class="k">for</span> <span class="n">existing</span> <span class="n">expert</span> <span class="n">UIDs</span>
+<span class="n">Find</span> <span class="n">gap</span><span class="p">:</span> <span class="n">back</span><span class="mf">.0.0.0</span> <span class="n">missing</span>
+<span class="n">Assign</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">back</span><span class="mf">.0.0.0</span>
+</pre></div>
+</div>
+</section>
+<section id="checkpoint-loading">
+<h3>4. Checkpoint Loading<a class="headerlink" href="#checkpoint-loading" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Query</span> <span class="n">DHT</span> <span class="k">for</span> <span class="n">latest</span> <span class="n">checkpoint</span> <span class="n">metadata</span>
+<span class="n">Download</span> <span class="n">model</span> <span class="n">parameters</span> <span class="k">for</span> <span class="s2">&quot;back&quot;</span> <span class="n">stage</span> <span class="kn">from</span><span class="w"> </span><span class="nn">peer</span><span class="p">,</span> <span class="n">checkpoint</span> <span class="ow">or</span> <span class="n">parameter</span> <span class="n">mirror</span> <span class="n">of</span> <span class="n">the</span> <span class="n">client</span>
+</pre></div>
+</div>
+</section>
+<section id="registration-resume">
+<h3>5. Registration &amp; Resume<a class="headerlink" href="#registration-resume" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Register</span> <span class="n">expert</span> <span class="n">UID</span> <span class="ow">in</span> <span class="n">DHT</span><span class="p">:</span> <span class="n">back</span><span class="mf">.0.0.0</span>
+<span class="n">Client</span> <span class="n">discovers</span> <span class="n">new</span> <span class="n">expert</span>
+<span class="n">Restart</span> <span class="n">trainer</span> <span class="mi">0</span> <span class="k">with</span> <span class="n">new</span> <span class="n">server</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="complex-failover-scenario-multiple-server-failures-with-pipeline-reorganization">
+<h2>Complex Failover Scenario: Multiple Server Failures with Pipeline Reorganization<a class="headerlink" href="#complex-failover-scenario-multiple-server-failures-with-pipeline-reorganization" title="Link to this heading">¶</a></h2>
+<p>This diagram demonstrates a more sophisticated failover scenario where multiple servers fail from different pipelines, causing all pipelines to break. The surviving servers then reorganize to form a new complete pipeline.</p>
+<p><strong>Scenario:</strong></p>
+<ul class="simple">
+<li><p>Initial: 4 servers forming 2 complete pipelines with 2 trainers</p></li>
+<li><p>Failures: One front server and one back server fail (from different pipelines)</p></li>
+<li><p>Recovery: The 2 surviving servers reorganize into 1 new pipeline</p></li>
+</ul>
+<div class="mermaid">
+            flowchart TB
+    %% Timeline labels
+    t0([Initial State: 2 Complete Pipelines])
+    t1([After Failures: Both Pipelines Broken])
+    t2([After Recovery: New Pipeline Formed])
+
+    %% Initial State: 4 servers, 2 complete pipelines, 2 trainers
+    subgraph Initial[&quot;Initial State (t=0)&quot;]
+        direction TB
+        
+        subgraph Pipeline1[&quot;Pipeline 1 ✓&quot;]
+            direction LR
+            T1[&quot;Trainer 1&quot;]
+            S1[&quot;Server 1&lt;br/&gt;front.0.0.0&lt;br/&gt;✓ Running&quot;]
+            S2[&quot;Server 2&lt;br/&gt;back.0.0.0&lt;br/&gt;✓ Running&quot;]
+            T1 --&gt; S1
+            S1 --&gt; S2
+        end
+        
+        subgraph Pipeline2[&quot;Pipeline 2 ✓&quot;]
+            direction LR
+            T2[&quot;Trainer 2&quot;]
+            S3[&quot;Server 3&lt;br/&gt;front.0.1.0&lt;br/&gt;✓ Running&quot;]
+            S4[&quot;Server 4&lt;br/&gt;back.0.1.0&lt;br/&gt;✓ Running&quot;]
+            T2 --&gt; S3
+            S3 --&gt; S4
+        end
+    end
+
+    %% During Failure: Server 1 (front.0.0.0) and Server 4 (back.0.1.0) fail
+    subgraph Failure[&quot;After Failures (t=20)&quot;]
+        direction TB
+        
+        subgraph Broken1[&quot;Pipeline 1 ✗ Broken&quot;]
+            direction LR
+            T1F[&quot;Trainer 1&lt;br/&gt;⚠️ Stopped&quot;]
+            S1F[&quot;Server 1&lt;br/&gt;front.0.0.0&lt;br/&gt;❌ FAILED&quot;]
+            S2F[&quot;Server 2&lt;br/&gt;back.0.0.0&lt;br/&gt;✓ Alive (orphaned)&quot;]
+            T1F -.X.-&gt; S1F
+            S1F -.X.-&gt; S2F
+        end
+        
+        subgraph Broken2[&quot;Pipeline 2 ✗ Broken&quot;]
+            direction LR
+            T2F[&quot;Trainer 2&lt;br/&gt;⚠️ Stopped&quot;]
+            S3F[&quot;Server 3&lt;br/&gt;front.0.1.0&lt;br/&gt;✓ Alive (orphaned)&quot;]
+            S4F[&quot;Server 4&lt;br/&gt;back.0.1.0&lt;br/&gt;❌ FAILED&quot;]
+            T2F --&gt; S3F
+            S3F -.X.-&gt; S4F
+        end
+    end
+
+    %% After Recovery: Server 3 (front) + Server 2 (back) form new pipeline
+    subgraph Recovery[&quot;After Recovery (t=40)&quot;]
+        direction TB
+        
+        subgraph NewPipeline[&quot;New Pipeline 3 ✓ Active&quot;]
+            direction LR
+            T3[&quot;Trainer 3&lt;br/&gt;✓ New Trainer&quot;]
+            S3R[&quot;Server 3&lt;br/&gt;front.0.2.0&lt;br/&gt;✓ Alive&quot;]
+            S2R[&quot;Server 2&lt;br/&gt;back.0.2.0&lt;br/&gt;✓ Alive&quot;]
+            T3 --&gt; S3R
+            S3R --&gt; S2R
+        end
+        
+        Note1[&quot;💡 Client detected:&lt;br/&gt;• front.0.1.0 available&lt;br/&gt;• back.0.0.0 available&lt;br/&gt;→ Restarted those servers so that they get a new expert id and thus form a new complete pipeline&lt;br/&gt;→ Spawned Trainer 3&quot;]
+    end
+
+    %% Timeline flow
+    t0 -.-&gt; Initial
+    Initial -.-&gt; t1
+    t1 -.-&gt; Failure
+    Failure -.-&gt; t2
+    t2 -.-&gt; Recovery
+
+    %% Styling
+    classDef initial fill:#ebf8ff,stroke:#3182ce,stroke-width:2px;
+    classDef failure fill:#fff5f5,stroke:#e53e3e,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef recovery fill:#f0fff4,stroke:#38a169,stroke-width:2px;
+    classDef note fill:#fefcbf,stroke:#d69e2e,stroke-width:2px;
+
+    class Initial initial;
+    class Failure failure;
+    class Recovery recovery;
+    class Note1 note;
+        </div><section id="detailed-walkthrough">
+<h3>Detailed Walkthrough<a class="headerlink" href="#detailed-walkthrough" title="Link to this heading">¶</a></h3>
+<section id="stage-1-initial-state-t-0">
+<h4>Stage 1: Initial State (t=0)<a class="headerlink" href="#stage-1-initial-state-t-0" title="Link to this heading">¶</a></h4>
+<p><strong>Available Experts:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">front.0.0.0</span></code> (Server 1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">back.0.0.0</span></code> (Server 2)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">front.0.1.0</span></code> (Server 3)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">back.0.1.0</span></code> (Server 4)</p></li>
+</ul>
+<p><strong>Complete Pipelines Found:</strong></p>
+<ol class="arabic simple">
+<li><p>Pipeline 1: <code class="docutils literal notranslate"><span class="pre">front.0.0.0</span></code> → <code class="docutils literal notranslate"><span class="pre">back.0.0.0</span></code> → Trainer 1 spawned</p></li>
+<li><p>Pipeline 2: <code class="docutils literal notranslate"><span class="pre">front.0.1.0</span></code> → <code class="docutils literal notranslate"><span class="pre">back.0.1.0</span></code> → Trainer 2 spawned</p></li>
+</ol>
+<p><strong>Status:</strong> 2 active trainers, both training successfully</p>
+</section>
+<section id="stage-2-failures-occur-t-20">
+<h4>Stage 2: Failures Occur (t=20)<a class="headerlink" href="#stage-2-failures-occur-t-20" title="Link to this heading">¶</a></h4>
+<p><strong>Failed Servers:</strong></p>
+<ul class="simple">
+<li><p>❌ Server 1 (<code class="docutils literal notranslate"><span class="pre">front.0.0.0</span></code>) - network disconnection</p></li>
+<li><p>❌ Server 4 (<code class="docutils literal notranslate"><span class="pre">back.0.1.0</span></code>) - hardware failure</p></li>
+</ul>
+<p><strong>Remaining Servers:</strong></p>
+<ul class="simple">
+<li><p>✓ Server 2 (<code class="docutils literal notranslate"><span class="pre">back.0.0.0</span></code>) - orphaned (no front stage)</p></li>
+<li><p>✓ Server 3 (<code class="docutils literal notranslate"><span class="pre">front.0.1.0</span></code>) - orphaned (no back stage)</p></li>
+</ul>
+<p><strong>Client Actions:</strong></p>
+<ol class="arabic simple">
+<li><p>Detects incomplete pipeline for 0 (missing <code class="docutils literal notranslate"><span class="pre">front.0.0.0</span></code>)</p></li>
+<li><p>Detects incomplete pipeline for 1 (missing <code class="docutils literal notranslate"><span class="pre">back.0.1.0</span></code>)</p></li>
+<li><p>Marks both experts as unavailable in DHT</p></li>
+<li><p>Stops both trainers (no complete pipelines available)</p></li>
+<li><p>Continues scanning DHT for new complete pipelines</p></li>
+</ol>
+<p><strong>Status:</strong> 0 active trainers, training paused, 2 idle servers</p>
+</section>
+<section id="stage-3-automatic-recovery-t-40">
+<h4>Stage 3: Automatic Recovery (t=40)<a class="headerlink" href="#stage-3-automatic-recovery-t-40" title="Link to this heading">¶</a></h4>
+<p><strong>Client Discovery Process:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Scanning DHT for available experts...
+Found: front.0.1.0 ✓
+Found: back.0.0.0 ✓
+Missing: front.0.0.0 ✗
+Missing: back.0.1.0 ✗
+
+Number of pipeline stages for full pipeline = 2
+- front.0.1.0 + back.0.0.0 = Can form a pipeline! ✓
+
+Restart both servers
+Through automatic discovery they form a new complete pipeline
+Client detects new pipeline and starts a new trainer 3: front.0.2.0 → back.0.2.0
+</pre></div>
+</div>
+<p><strong>New Pipeline Formed:</strong></p>
+<ul class="simple">
+<li><p>Pipeline 3: <code class="docutils literal notranslate"><span class="pre">front.0.1.0</span></code> → <code class="docutils literal notranslate"><span class="pre">back.0.0.0</span></code> → Trainer 3 spawned</p></li>
+</ul>
+<p><strong>Status:</strong> 1 active trainer, training resumed</p>
+</section>
+</section>
+<section id="key-insights">
+<h3>Key Insights<a class="headerlink" href="#key-insights" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Adaptive Resource Utilization</strong>: Even though both original pipelines failed, the system recombines surviving servers from different pipelines.</p></li>
+<li><p><strong>No Manual Intervention</strong>: The entire recovery process is automatic:</p>
+<ul class="simple">
+<li><p>Client continuously scans DHT</p></li>
+<li><p>Detects if new pipelines can be formed</p></li>
+<li><p>Spawns trainers for complete pipelines</p></li>
+</ul>
+</li>
+<li><p><strong>Graceful Degradation</strong>: Training throughput reduced from 2 pipelines to 1, but training continues rather than failing completely.</p></li>
+</ol>
+</section>
+<section id="timeline-summary">
+<h3>Timeline Summary<a class="headerlink" href="#timeline-summary" title="Link to this heading">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>t=0s   : 4 servers, 2 pipelines, 2 trainers
+         [T1: front.0.0.0 → back.0.0.0]
+         [T2: front.0.1.0 → back.0.1.0]
+         
+t=20s  : 2 servers fail (Server 1, Server 4)
+         Client detects failures
+         Stops both trainers
+         
+t=25s  : Client scans DHT
+         Discovers: front.0.1.0, back.0.0.0
+         Forms new complete pipeline
+         
+t=30s  : Spawns Trainer 3 for new pipeline
+         [T3: front.0.2.0 → back.0.2.0]
+         
+t=40s+ : Training continues with 1 pipeline
+         50% throughput maintained
+</pre></div>
+</div>
+</section>
+<section id="configuration-impact">
+<h3>Configuration Impact<a class="headerlink" href="#configuration-impact" title="Link to this heading">¶</a></h3>
+<p>This scenario demonstrates why these configuration parameters matter:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># How often client scans for new experts</span>
+<span class="nt">client</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">refresh_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w">  </span><span class="c1"># Lower = faster recovery detection</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal notranslate"><span class="pre">dht_handler.py</span></code> the expiration time can be changed to control when the server heartbeat expires after failure. Will eventually become a config parameter as well.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">DistQat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DOCUMENTATION_INDEX.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../QUICK_START.html">Quick Start Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DEPLOYMENT.html">Setup/Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SKYPILOT_SERVER_SETUP.html">Skypilot server setup template</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Diagrams</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">Architecture Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NODE_ARRANGEMENT.html">Node Arrangement Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TRAINING_FLOW.html">Training Flow Diagram</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Failover Mechanism Diagram</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="TRAINING_FLOW.html" title="previous chapter">Training Flow Diagram</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, SEMRON Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/diagrams/FAILOVER.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

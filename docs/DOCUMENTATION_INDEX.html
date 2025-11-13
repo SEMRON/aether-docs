@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Index &#8212; DistQat  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Documentation" href="README.html" />
+    <link rel="prev" title="Welcome to DistQat’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="index">
+<h1>Index<a class="headerlink" href="#index" title="Link to this heading">¶</a></h1>
+<p>Complete guide to all DistQat documentation resources.</p>
+<section id="main-documentation">
+<h2>📚 Main Documentation<a class="headerlink" href="#main-documentation" title="Link to this heading">¶</a></h2>
+<section id="getting-started">
+<h3>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference internal" href="README.html"><span class="std std-doc">README</span></a></strong> - Main documentation with comprehensive guides</p>
+<ul>
+<li><p>Overview and features</p></li>
+<li><p>Installation instructions</p></li>
+<li><p>Architecture explanation</p></li>
+<li><p>Usage examples</p></li>
+<li><p>Troubleshooting &amp; FAQ</p></li>
+<li><p>Advanced topics</p></li>
+</ul>
+</li>
+<li><p><strong><a class="reference internal" href="QUICK_START.html"><span class="std std-doc">QUICK_START</span></a></strong> - Get running in 5 minutes</p>
+<ul>
+<li><p>Fast installation guide</p></li>
+<li><p>Local training quickstart</p></li>
+<li><p>Distributed training quickstart</p></li>
+<li><p>Common issues and fixes</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="development">
+<h3>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="http://CONTRIBUTING.md">CONTRIBUTING.md</a></strong> - Contribution guidelines (see repository root)</p>
+<ul>
+<li><p>Development setup</p></li>
+<li><p>Code style and standards</p></li>
+<li><p>Testing guidelines</p></li>
+<li><p>Pull request process</p></li>
+<li><p>Adding new models</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="architecture-diagrams">
+<h2>🖼️ Architecture Diagrams<a class="headerlink" href="#architecture-diagrams" title="Link to this heading">¶</a></h2>
+<p>Visual guides to understanding DistQat’s architecture and operation.</p>
+<section id="component-diagrams">
+<h3>Component Diagrams<a class="headerlink" href="#component-diagrams" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference internal" href="diagrams/ARCHITECTURE.html"><span class="std std-doc">Architecture Overview</span></a></strong></p>
+<ul>
+<li><p>System component diagram</p></li>
+<li><p>DHT network topology</p></li>
+<li><p>Component interactions</p></li>
+<li><p>Data flow visualization</p></li>
+</ul>
+</li>
+<li><p><strong><a class="reference internal" href="diagrams/NODE_ARRANGEMENT.html"><span class="std std-doc">Node Arrangement</span></a></strong></p>
+<ul>
+<li><p>Multi-machine deployment layout</p></li>
+<li><p>Port assignment patterns</p></li>
+<li><p>Expert UID namespace</p></li>
+<li><p>Replication and load balancing</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="process-diagrams">
+<h3>Process Diagrams<a class="headerlink" href="#process-diagrams" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference internal" href="diagrams/TRAINING_FLOW.html"><span class="std std-doc">Training Flow</span></a></strong></p>
+<ul>
+<li><p>Forward/backward pass sequences</p></li>
+<li><p>DiLoCo synchronization</p></li>
+<li><p>Inner vs outer optimization loops</p></li>
+<li><p>Timing and communication patterns</p></li>
+</ul>
+</li>
+<li><p><strong><a class="reference internal" href="diagrams/FAILOVER.html"><span class="std std-doc">Failover Mechanism</span></a></strong></p>
+<ul>
+<li><p>Failure detection process</p></li>
+<li><p>Automatic recovery timeline</p></li>
+<li><p>Node state transitions</p></li>
+<li><p>Topology changes during failover</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="configuration">
+<h2>📖 Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
+<section id="configuration-files">
+<h3>Configuration Files<a class="headerlink" href="#configuration-files" title="Link to this heading">¶</a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">configs/</span></code> directory:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">resnet18.yaml</span></code> - ResNet18 on CIFAR-10 (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">resnet50.yaml</span></code> - ResNet50 configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">resnet101.yaml</span></code> - ResNet101 configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">distilgpt2.yaml</span></code> - DistilGPT2 language model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">distilgpt2_full.yaml</span></code> - Full DistilGPT2 model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gptneo.yaml</span></code> - GPT-Neo configuration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gptneo_full.yaml</span></code> - Full GPT-Neo model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wav2vec2.yaml</span></code> - Wav2Vec2 audio model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wav2vec2_full.yaml</span></code> - Full Wav2Vec2 model</p></li>
+</ul>
+</section>
+<section id="configuration-sections">
+<h3>Configuration Sections<a class="headerlink" href="#configuration-sections" title="Link to this heading">¶</a></h3>
+<p>Each config file contains:</p>
+<ul class="simple">
+<li><p><strong>Data</strong>: Dataset and preprocessing settings</p></li>
+<li><p><strong>DiLoCo</strong>: Optimization parameters (inner/outer optimizers)</p></li>
+<li><p><strong>Model Pipeline</strong>: Pipeline stage definitions</p></li>
+<li><p><strong>Param Mirror</strong>: Checkpointing configuration</p></li>
+<li><p><strong>Data Server</strong>: IPC settings for data sharing</p></li>
+<li><p><strong>Device</strong>: Hardware configuration</p></li>
+</ul>
+</section>
+</section>
+<section id="api-reference">
+<h2>🔧 API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h2>
+<section id="core-modules">
+<h3>Core Modules<a class="headerlink" href="#core-modules" title="Link to this heading">¶</a></h3>
+<section id="distributed-components">
+<h4>Distributed Components<a class="headerlink" href="#distributed-components" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.distributed.monitor</span></code></strong> - DHT monitoring and metrics aggregation</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.distributed.client</span></code></strong> - Expert discovery and trainer orchestration</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.distributed.server</span></code></strong> - Expert hosting and request handling</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.distributed.trainer</span></code></strong> - Training loop execution</p></li>
+</ul>
+</section>
+<section id="models">
+<h4>Models<a class="headerlink" href="#models" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.models.resnet</span></code></strong> - ResNet variants (18, 50, 101)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.models.distilgpt2</span></code></strong> - DistilGPT2 implementations</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.models.gpt_neo</span></code></strong> - GPT-Neo implementations</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.models.wav2vec2</span></code></strong> - Wav2Vec2 implementations</p></li>
+</ul>
+</section>
+<section id="optimization">
+<h4>Optimization<a class="headerlink" href="#optimization" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.distributed.optim.diloco</span></code></strong> - DiLoCo optimizer implementation</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.distributed.optim.collaborative</span></code></strong> - Collaborative optimization utilities</p></li>
+</ul>
+</section>
+<section id="utilities">
+<h4>Utilities<a class="headerlink" href="#utilities" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.config</span></code></strong> - Configuration schemas and parsing</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.data</span></code></strong> - Data loading and preprocessing</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">distqat.sharding</span></code></strong> - Model sharding utilities</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="examples">
+<h2>📝 Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<section id="basic-examples">
+<h3>Basic Examples<a class="headerlink" href="#basic-examples" title="Link to this heading">¶</a></h3>
+<ol class="arabic">
+<li><p><strong>Local Training</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>start_trainer_client.py
+</pre></div>
+</div>
+</li>
+<li><p><strong>Distributed Training (2 machines)</strong></p>
+<ul class="simple">
+<li><p>Machine 1: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">start_trainer_client.py</span> <span class="pre">--public-ip</span> <span class="pre">$PUBLIC_IP</span></code></p></li>
+<li><p>Machine 2: <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">start_servers.py</span> <span class="pre">--public-ip</span> <span class="pre">$PUBLIC_IP</span> <span class="pre">--num-servers</span> <span class="pre">2</span> <span class="pre">--initial-peers</span> <span class="pre">$PEERS</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Failover Testing</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>test_failover.py<span class="w"> </span>--public-ip<span class="w"> </span><span class="nv">$PUBLIC_IP</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="model-examples">
+<h3>Model Examples<a class="headerlink" href="#model-examples" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>ResNet18 on CIFAR-10</strong> - Default configuration</p></li>
+<li><p><strong>ResNet50 on ImageNet</strong> - Large-scale image classification</p></li>
+<li><p><strong>DistilGPT2</strong> - Language model pretraining</p></li>
+<li><p><strong>GPT-Neo</strong> - Larger language models</p></li>
+<li><p><strong>Wav2Vec2</strong> - Audio/speech models</p></li>
+</ul>
+</section>
+</section>
+<section id="testing">
+<h2>🧪 Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
+<section id="test-files">
+<h3>Test Files<a class="headerlink" href="#test-files" title="Link to this heading">¶</a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">tests/</span></code> directory:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">test_data_server.py</span></code> - Data server functionality</p></li>
+<li><p>Additional tests for models, utilities, etc.</p></li>
+</ul>
+</section>
+<section id="running-tests">
+<h3>Running Tests<a class="headerlink" href="#running-tests" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># All tests</span>
+pytest<span class="w"> </span>tests/
+
+<span class="c1"># Specific test</span>
+pytest<span class="w"> </span>tests/test_data_server.py
+
+<span class="c1"># With coverage</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>src/distqat<span class="w"> </span>tests/
+</pre></div>
+</div>
+</section>
+</section>
+<section id="deployment">
+<h2>🚢 Deployment<a class="headerlink" href="#deployment" title="Link to this heading">¶</a></h2>
+<section id="deployment-guides">
+<h3>Deployment Guides<a class="headerlink" href="#deployment-guides" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference internal" href="DEPLOYMENT.html"><span class="std std-doc">Deployment Overview</span></a></strong> - Supported targets and script generation workflows</p></li>
+<li><p><strong><a class="reference internal" href="#skypilot/skypilot-server-setup.md"><span class="xref myst">SkyPilot server setup template</span></a></strong> - Cloud-init template for running the SkyPilot API server</p></li>
+<li><p><strong>Tested platforms</strong></p>
+<ul>
+<li><p><a class="reference internal" href="#skypilot/tested-platforms/aws-amd.md"><span class="xref myst">AWS AMD instances</span></a></p></li>
+<li><p><a class="reference internal" href="#skypilot/tested-platforms/lambda.md"><span class="xref myst">AWS Lambda preview</span></a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="skypilot-configurations">
+<h3>SkyPilot Configurations<a class="headerlink" href="#skypilot-configurations" title="Link to this heading">¶</a></h3>
+<p>Located in <code class="docutils literal notranslate"><span class="pre">skypilot/</span></code> directory:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">start_trainer_client.yaml</span></code> - Deploy coordinator node</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_servers.yaml</span></code> - Deploy worker nodes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">demo.yaml</span></code> - Demo deployment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_on_single_server.yaml</span></code> - Single-machine testing</p></li>
+</ul>
+</section>
+<section id="launch-scripts">
+<h3>Launch Scripts<a class="headerlink" href="#launch-scripts" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">start_trainer_client.py</span></code> - Launch coordinator (monitor + client)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start_servers.py</span></code> - Launch worker servers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_failover.py</span></code> - Test failover mechanism</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_demo.py</span></code> - Demo orchestration</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_local.py</span></code> - Swarm training script</p></li>
+</ul>
+</section>
+</section>
+<section id="troubleshooting-resources">
+<h2>🔍 Troubleshooting Resources<a class="headerlink" href="#troubleshooting-resources" title="Link to this heading">¶</a></h2>
+<section id="quick-fixes">
+<h3>Quick Fixes<a class="headerlink" href="#quick-fixes" title="Link to this heading">¶</a></h3>
+<p>From <a class="reference internal" href="README.html#troubleshooting-faq"><span class="std std-ref">README Troubleshooting section</span></a>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Issue</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Leftover processes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pkill</span> <span class="pre">-f</span> <span class="pre">distqat</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Port conflicts</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">-9</span> <span class="pre">$(lsof</span> <span class="pre">-t</span> <span class="pre">-i:50000)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>CUDA OOM</p></td>
+<td><p>Reduce <code class="docutils literal notranslate"><span class="pre">batch_size_per_step</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Slow training</p></td>
+<td><p>Increase timeouts</p></td>
+</tr>
+<tr class="row-even"><td><p>WandB errors</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wandb</span> <span class="pre">login</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="detailed-guides">
+<h3>Detailed Guides<a class="headerlink" href="#detailed-guides" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Network Issues</strong> - DHT connectivity, firewall rules</p></li>
+<li><p><strong>Performance Issues</strong> - Timeouts, bandwidth optimization</p></li>
+<li><p><strong>Checkpoint Issues</strong> - Loading, saving, recovery</p></li>
+<li><p><strong>Configuration Issues</strong> - YAML syntax, parameter tuning</p></li>
+</ul>
+</section>
+</section>
+<section id="monitoring">
+<h2>📊 Monitoring<a class="headerlink" href="#monitoring" title="Link to this heading">¶</a></h2>
+<section id="logging">
+<h3>Logging<a class="headerlink" href="#logging" title="Link to this heading">¶</a></h3>
+<p>Logs are saved to <code class="docutils literal notranslate"><span class="pre">logs/{experiment_prefix}/</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">monitor.log</span></code> - DHT and metrics</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">client.log</span></code> - Expert discovery</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">server_*.log</span></code> - Individual servers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trainer_*.log</span></code> - Individual trainers</p></li>
+</ul>
+</section>
+<section id="wandb-integration">
+<h3>WandB Integration<a class="headerlink" href="#wandb-integration" title="Link to this heading">¶</a></h3>
+<p>Configure in YAML:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">wandb_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;distqat&quot;</span>
+<span class="nt">wandb_entity</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your-entity&quot;</span>
+<span class="nt">experiment_prefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your-experiment&quot;</span>
+</pre></div>
+</div>
+<p>View metrics:</p>
+<ul class="simple">
+<li><p>Loss curves per trainer</p></li>
+<li><p>Samples per second</p></li>
+<li><p>Alive peers</p></li>
+<li><p>DHT state</p></li>
+</ul>
+</section>
+</section>
+<section id="learning-resources">
+<h2>🎓 Learning Resources<a class="headerlink" href="#learning-resources" title="Link to this heading">¶</a></h2>
+<section id="papers-references">
+<h3>Papers &amp; References<a class="headerlink" href="#papers-references" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Hivemind</strong> - Decentralized deep learning</p></li>
+<li><p><strong>SWARM Parallelism</strong> - Communication-efficient training</p></li>
+<li><p><strong>OpenDiLoCo</strong> - Distributed low-communication optimization</p></li>
+<li><p><strong>Protocol Models</strong> - Model parallelism over internet</p></li>
+</ul>
+<p>See <a class="reference internal" href="README.html#citations"><span class="std std-ref">Citations</span></a> for full references.</p>
+</section>
+<section id="related-projects">
+<h3>Related Projects<a class="headerlink" href="#related-projects" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="https://github.com/learning-at-home/hivemind">Hivemind</a></strong> - P2P framework</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/PrimeIntellect-ai/OpenDiLoCo">OpenDiLoCo</a></strong> - DiLoCo implementation</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/PrimeIntellect-ai/prime">Prime</a></strong> - GPU resource management</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/bigscience-workshop/petals">Petals</a></strong> - Distributed inference</p></li>
+</ul>
+</section>
+</section>
+<section id="support">
+<h2>📞 Support<a class="headerlink" href="#support" title="Link to this heading">¶</a></h2>
+<section id="getting-help">
+<h3>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Check Documentation</strong> - Start with README and Quick Start</p></li>
+<li><p><strong>Search Issues</strong> - Look for similar problems on GitHub</p></li>
+<li><p><strong>Ask Questions</strong> - Open a discussion or issue</p></li>
+<li><p><strong>Contact Maintainers</strong> - See README for contact info</p></li>
+</ol>
+</section>
+<section id="reporting-issues">
+<h3>Reporting Issues<a class="headerlink" href="#reporting-issues" title="Link to this heading">¶</a></h3>
+<p>When reporting issues, include:</p>
+<ul class="simple">
+<li><p>Python version and dependencies</p></li>
+<li><p>Configuration file</p></li>
+<li><p>Error messages and stack traces</p></li>
+<li><p>Steps to reproduce</p></li>
+<li><p>Expected vs actual behavior</p></li>
+</ul>
+</section>
+<section id="feature-requests">
+<h3>Feature Requests<a class="headerlink" href="#feature-requests" title="Link to this heading">¶</a></h3>
+<p>We welcome feature requests! Please:</p>
+<ul class="simple">
+<li><p>Check existing issues first</p></li>
+<li><p>Describe the use case</p></li>
+<li><p>Explain expected behavior</p></li>
+<li><p>Provide examples if applicable</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="license">
+<h2>📄 License<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
+<p>All documentation is licensed under the same terms as the project (MIT License).</p>
+<hr class="docutils" />
+<p><strong>Last Updated</strong>: November 2025</p>
+<p>For the most up-to-date documentation, see the <a class="reference external" href="https://github.com/yourorg/distqat">GitHub repository</a>.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">DistQat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QUICK_START.html">Quick Start Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOYMENT.html">Setup/Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SKYPILOT_SERVER_SETUP.html">Skypilot server setup template</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Diagrams</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/ARCHITECTURE.html">Architecture Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/NODE_ARRANGEMENT.html">Node Arrangement Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/TRAINING_FLOW.html">Training Flow Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/FAILOVER.html">Failover Mechanism Diagram</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to DistQat’s documentation!</a></li>
+      <li>Next: <a href="README.html" title="next chapter">Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, SEMRON Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/DOCUMENTATION_INDEX.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

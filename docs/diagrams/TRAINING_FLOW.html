@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Training Flow Diagram &#8212; DistQat  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/mermaid@10.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Failover Mechanism Diagram" href="FAILOVER.html" />
+    <link rel="prev" title="Node Arrangement Diagram" href="NODE_ARRANGEMENT.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="training-flow-diagram">
+<h1>Training Flow Diagram<a class="headerlink" href="#training-flow-diagram" title="Link to this heading">¶</a></h1>
+<div class="mermaid">
+            sequenceDiagram
+    participant T as Trainer
+    participant S0 as Server (Stage 0)
+    participant S1 as Server (Stage 1)
+    
+    Note over T,S1: Forward Pass
+    T-&gt;&gt;S0: send batch (input data)
+    activate S0
+    S0-&gt;&gt;S0: compute forward
+    S0-&gt;&gt;S1: send activations (hidden)
+    deactivate S0
+    activate S1
+    S1-&gt;&gt;S1: compute forward + loss
+    S1-&gt;&gt;T: send output/loss
+    deactivate S1
+    
+    Note over T,S1: Backward Pass
+    T-&gt;&gt;S1: send loss gradient
+    activate S1
+    S1-&gt;&gt;S1: compute backward
+    S1-&gt;&gt;S0: send gradients (hidden)
+    deactivate S1
+    activate S0
+    S0-&gt;&gt;S0: compute backward
+    S0-&gt;&gt;S0: update local params
+    S0-&gt;&gt;T: send gradients (input)
+    deactivate S0
+    
+    T-&gt;&gt;T: update learning rate
+    
+    Note over T,S1: Repeat inner_steps times
+    
+    Note over S0,S1: DiLoCo Outer Synchronization &lt;br&gt; if there are more than 1 &lt;br&gt; servers stage
+    S0-&gt;&gt;S1: all-reduce parameters
+    S1-&gt;&gt;S0: averaged parameters
+    S0-&gt;&gt;S0: apply outer optimizer
+    S1-&gt;&gt;S1: apply outer optimizer
+        </div><section id="inner-vs-outer-loop">
+<h2>Inner vs Outer Loop<a class="headerlink" href="#inner-vs-outer-loop" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>For outer_step in range(outer_steps):
+    ├─ For inner_step in range(inner_steps):
+    │   ├─ Forward pass (Trainer → Server0 → Server1)
+    │   ├─ Backward pass (Server1 → Server0 → Trainer)
+    │   └─ Local parameter update (Adam/SGD)
+    │
+    └─ Global synchronization
+        ├─ Average parameters across all replicas
+        └─ Apply outer optimizer (SGD + momentum)
+</pre></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">DistQat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DOCUMENTATION_INDEX.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../QUICK_START.html">Quick Start Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DEPLOYMENT.html">Setup/Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SKYPILOT_SERVER_SETUP.html">Skypilot server setup template</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Diagrams</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ARCHITECTURE.html">Architecture Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NODE_ARRANGEMENT.html">Node Arrangement Diagram</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Training Flow Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FAILOVER.html">Failover Mechanism Diagram</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="NODE_ARRANGEMENT.html" title="previous chapter">Node Arrangement Diagram</a></li>
+      <li>Next: <a href="FAILOVER.html" title="next chapter">Failover Mechanism Diagram</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, SEMRON Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/diagrams/TRAINING_FLOW.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

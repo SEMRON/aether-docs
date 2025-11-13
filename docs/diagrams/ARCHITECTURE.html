@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Architecture Diagram &#8212; DistQat  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/mermaid@10.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Node Arrangement Diagram" href="NODE_ARRANGEMENT.html" />
+    <link rel="prev" title="Skypilot server setup template" href="../SKYPILOT_SERVER_SETUP.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="architecture-diagram">
+<h1>Architecture Diagram<a class="headerlink" href="#architecture-diagram" title="Link to this heading">¶</a></h1>
+<div class="mermaid">
+            graph TB
+    subgraph DHT[DHT Network - Distributed Hash Table]
+        direction LR
+        PAD[&quot; &quot;]:::pad
+        P2P[P2P Connections]
+    end
+    
+    Monitor[Monitor&lt;br/&gt;- Initialize DHT&lt;br/&gt;- Collect metrics&lt;br/&gt;- WandB logging]
+    Client[Client&lt;br/&gt;- Discover experts&lt;br/&gt;- Spawn trainers&lt;br/&gt;- Load balancing #40;to come#41;]
+    DS[Data Server &lt;br/&gt;- Streams Data from where it's hosted&lt;br/&gt;- Pushes it into shared memory]
+    
+    subgraph Servers[Server Nodes]
+        S1[Server 1&lt;br/&gt;Stage: front&lt;br/&gt;Expert: 0]
+        S2[Server 2&lt;br/&gt;Stage: back&lt;br/&gt;Expert: 0]
+        S3[Server 3&lt;br/&gt;Stage: front&lt;br/&gt;Expert: 1]
+        S4[Server 4&lt;br/&gt;Stage: back&lt;br/&gt;Expert: 1]
+    end
+    
+    subgraph Trainers[Trainer Processes]
+        T1[Trainer 1&lt;br/&gt;Pipeline: 0]
+        T2[Trainer 2&lt;br/&gt;Pipeline: 1]
+    end
+    
+    DHT --&gt; Monitor
+    DHT --&gt; Client
+    DHT --&gt; S1
+    DHT --&gt; S2
+    DHT --&gt; S3
+    DHT --&gt; S4
+    DHT --&gt; T1
+    DHT --&gt; T2
+    
+    Monitor --&gt;|Writes peers| Client
+    Client --&gt;|Discovers| S1
+    Client --&gt;|Discovers| S2
+    Client --&gt;|Discovers| S3
+    Client --&gt;|Discovers| S4
+    Client --&gt;|Spawns| T1
+    Client --&gt;|Spawns| T2
+    Client --&gt;|Spawns| DS
+
+    T1 --&gt;|Pulls Data| DS
+    T2 --&gt;|Pulls Data| DS
+    
+    T1 --&gt;|Forward| S1
+    S1 --&gt;|Forward| S2
+    S2 --&gt;|Backward| S1
+    S1 --&gt;|Backward| T1
+    
+    T2 --&gt;|Forward| S3
+    S3 --&gt;|Forward| S4
+    S4 --&gt;|Backward| S3
+    S3 --&gt;|Backward| T2
+
+
+
+    S1 &lt;--&gt;|Averages| S3
+    S2 &lt;--&gt;|Averages| S4
+
+
+
+    classDef pad fill:transparent,stroke:transparent,stroke-width:0,opacity:0;
+        </div></section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">DistQat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DOCUMENTATION_INDEX.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../QUICK_START.html">Quick Start Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../DEPLOYMENT.html">Setup/Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../SKYPILOT_SERVER_SETUP.html">Skypilot server setup template</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Diagrams</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NODE_ARRANGEMENT.html">Node Arrangement Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TRAINING_FLOW.html">Training Flow Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FAILOVER.html">Failover Mechanism Diagram</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../SKYPILOT_SERVER_SETUP.html" title="previous chapter">Skypilot server setup template</a></li>
+      <li>Next: <a href="NODE_ARRANGEMENT.html" title="next chapter">Node Arrangement Diagram</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, SEMRON Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="../_sources/diagrams/ARCHITECTURE.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

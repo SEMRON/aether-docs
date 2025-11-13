@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Skypilot server setup template &#8212; DistQat  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Architecture Diagram" href="diagrams/ARCHITECTURE.html" />
+    <link rel="prev" title="Setup/Deployment" href="DEPLOYMENT.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="skypilot-server-setup-template">
+<h1>Skypilot server setup template<a class="headerlink" href="#skypilot-server-setup-template" title="Link to this heading">¶</a></h1>
+<p><a class="reference external" href="https://docs.skypilot.co/en/latest/docs/index.html">Skypilot</a> is cluster management system, which makes it easy to deploy workloads to a host of platforms.</p>
+<p>Skypilot is originally intended mostly for managing heterogenous clusters, but we simply use it as a simple to set up and convenient way to deploy to a host of different clouds for now.</p>
+<section id="skypilot-setup">
+<h2>Skypilot setup<a class="headerlink" href="#skypilot-setup" title="Link to this heading">¶</a></h2>
+<p>Settin up skypilot can be quite involved, for our purposes, you can simply start by instantiating a server in an environment of your choosing, with the following cloud-init template.</p>
+<p>With this template, you only need to insert your public keys, and then you can connect to it through ssh.</p>
+<p>Connect to the <code class="docutils literal notranslate"><span class="pre">skyserver</span></code> user, and activate the conda environment <code class="docutils literal notranslate"><span class="pre">sky</span></code> to set up the cloud providers.
+(see the official <a class="reference external" href="https://docs.skypilot.co/en/latest/getting-started/installation.html#aws">skypilot installation docs</a> — note, you only need to regard the individual cloud setup parts, the initial install is already handled)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>skyserver@1-1-1-1<span class="w"> </span>:~$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>miniconda3/etc/profile.d/conda.sh
+skyserver@1-1-1-1<span class="w"> </span>:~$<span class="w"> </span>conda<span class="w"> </span>activate<span class="w"> </span>sky
+
+<span class="c1"># aws setup:</span>
+skyserver@1-1-1-1<span class="w"> </span>:~$<span class="w"> </span>aws<span class="w"> </span>configure
+
+<span class="c1"># for all cloud platforms see the skypilot install docs</span>
+</pre></div>
+</div>
+<section id="using-skypilot">
+<h3>Using skypilot<a class="headerlink" href="#using-skypilot" title="Link to this heading">¶</a></h3>
+<p>For using skypilot, you can connect to the <code class="docutils literal notranslate"><span class="pre">regularuser</span></code> account.</p>
+<p>Skypilot provides api enpoints and a web interface, which are exposed on port :8080.
+Connect through ssh with a port forward to be able to access the web interface locally.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ssh</span> <span class="pre">-L</span> <span class="pre">8080:localhost:8080</span> <span class="pre">&lt;server</span> <span class="pre">address&gt;</span></code></p>
+<p>The dashboard is now accessible under <a class="reference external" href="http://localhost:8080/dashboard">http://localhost:8080/dashboard</a>.</p>
+<p>The skypilot exe is provided for your convenience in <code class="docutils literal notranslate"><span class="pre">~/bin/sky</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># test api connection</span>
+skyserver@1-1-1-1<span class="w"> </span>:~$<span class="w"> </span>bin/sky<span class="w"> </span>status
+<span class="c1"># list all available gpu types</span>
+skyserver@1-1-1-1<span class="w"> </span>:~$<span class="w"> </span>bin/sky<span class="w"> </span>show-gpus<span class="w"> </span>-a
+</pre></div>
+</div>
+<p>For actual development work, you will likely want to install skypilot locally. In this case, you’ll have to use the <a class="reference external" href="https://docs.skypilot.co/en/latest/reference/api-server/api-server.html#sky-api-server-connect">skypilot api connect command</a>. (enter the <code class="docutils literal notranslate"><span class="pre">http://localhost:8080</span></code> endpoint when prompted)</p>
+</section>
+<section id="cloud-init-template">
+<h3>cloud-init template<a class="headerlink" href="#cloud-init-template" title="Link to this heading">¶</a></h3>
+<p>Insert your public keys, and run on a cloud of your choosing. (taking care to keep the ports open)</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1">#cloud-config</span>
+<span class="nt">package_update</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">package_upgrade</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="nt">packages</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wget</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">git</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ca-certificates</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apt-transport-https</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tzdata</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unzip</span>
+
+<span class="nt">users</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">skyserver</span>
+<span class="w">    </span><span class="nt">gecos</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SkyPilot</span><span class="nv"> </span><span class="s">API</span><span class="nv"> </span><span class="s">Server&quot;</span>
+<span class="w">    </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/bash</span>
+<span class="w">    </span><span class="nt">groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">docker</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">sudo</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ALL=(ALL)</span><span class="nv"> </span><span class="s">NOPASSWD:ALL&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">ssh_authorized_keys</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssh-rsa AAAAB.... your authorized key here</span>
+<span class="w">    </span><span class="nt">lock_passwd</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">regularuser</span>
+<span class="w">    </span><span class="nt">gecos</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Regular</span><span class="nv"> </span><span class="s">User&quot;</span>
+<span class="w">    </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/bash</span>
+<span class="w">    </span><span class="nt">groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">sudo</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">ssh_authorized_keys</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ssh-rsa AAAAB.... your authorized key here</span>
+<span class="w">    </span><span class="nt">lock_passwd</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="nt">write_files</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Miniconda (user-local) installer for &#39;skyserver&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/local/sbin/install_miniconda_user.sh</span>
+<span class="w">    </span><span class="nt">permissions</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0755&#39;</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root:root</span>
+<span class="w">    </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">#!/usr/bin/env bash</span>
+<span class="w">      </span><span class="no">set -euo pipefail</span>
+<span class="w">      </span><span class="no">USERHOME=&quot;$(readlink -f ~)&quot;</span>
+<span class="w">      </span><span class="no">TMPDIR=&quot;$(mktemp -d)&quot;</span>
+<span class="w">      </span><span class="no">trap &#39;rm -rf &quot;$TMPDIR&quot;&#39; EXIT</span>
+<span class="w">      </span><span class="no">chmod 755 &quot;$TMPDIR&quot;</span>
+<span class="w">      </span><span class="no">cd &quot;$TMPDIR&quot;</span>
+<span class="w">      </span><span class="no">wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O &quot;$TMPDIR/miniconda.sh&quot;</span>
+<span class="w">      </span><span class="no">chmod +x &quot;$TMPDIR/miniconda.sh&quot;</span>
+<span class="w">      </span><span class="no">bash &quot;$TMPDIR/miniconda.sh&quot; -b -p &quot;$USERHOME/miniconda3&quot;</span>
+<span class="w">      </span><span class="no"># shell init</span>
+<span class="w">      </span><span class="no">echo &#39;. &quot;$HOME/miniconda3/etc/profile.d/conda.sh&quot; &gt;/dev/null 2&gt;&amp;1 || true&#39; | tee -a &quot;$USERHOME/.bashrc&quot; &gt;/dev/null</span>
+<span class="w">      </span><span class="no">echo &#39;export PATH=&quot;$HOME/miniconda3/bin:$PATH&quot;&#39; | tee -a &quot;$USERHOME/.bashrc&quot; &gt;/dev/null</span>
+
+<span class="w">  </span><span class="c1"># Bootstrap SkyPilot env for the server user (Python 3.10 + cloud CLIs/libs)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/local/sbin/bootstrap_sky_env.sh</span>
+<span class="w">    </span><span class="nt">permissions</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0755&#39;</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root:root</span>
+<span class="w">    </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">#!/usr/bin/env bash</span>
+<span class="w">      </span><span class="no">set -euo pipefail</span>
+<span class="w">      </span><span class="no">USERNAME=&quot;$(whoami)&quot;</span>
+<span class="w">      </span><span class="no">USERHOME=&quot;$(readlink -f ~)&quot;</span>
+<span class="w">      </span><span class="no">export HOME=&quot;$USERHOME&quot;</span>
+<span class="w">      </span><span class="no">export PATH=&quot;$USERHOME/miniconda3/bin:$PATH&quot;</span>
+<span class="w">      </span><span class="no">. &quot;$USERHOME/miniconda3/etc/profile.d/conda.sh&quot;</span>
+<span class="w">      </span><span class="no">conda config --set always_yes yes --set changeps1 no</span>
+<span class="w">      </span><span class="no">conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main</span>
+<span class="w">      </span><span class="no">conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r</span>
+<span class="w">      </span><span class="no">if ! conda env list | grep -qE &#39;^\s*sky\s&#39;; then</span>
+<span class="w">        </span><span class="no">conda create -n sky python=3.10</span>
+<span class="w">      </span><span class="no">fi</span>
+<span class="w">      </span><span class="no"># Install SkyPilot client bits for cloud logins/checks</span>
+<span class="w">      </span><span class="no">conda run -n sky python -m pip install --upgrade pip</span>
+<span class="w">      </span><span class="no">conda run -n sky python -m pip install &quot;skypilot[all]&quot;</span>
+<span class="w">      </span><span class="no"># Convenience shims</span>
+<span class="w">      </span><span class="no">install -d -m 0755 -o &quot;$USERNAME&quot; -g &quot;$USERNAME&quot; &quot;$USERHOME/bin&quot;</span>
+<span class="w">      </span><span class="no">ln -sf &quot;$USERHOME/miniconda3/envs/sky/bin/sky&quot; &quot;$USERHOME/bin/sky&quot;</span>
+<span class="w">      </span><span class="no">ln -sf &quot;$USERHOME/miniconda3/envs/sky/bin/pip&quot; &quot;$USERHOME/bin/pip-sky&quot;</span>
+
+<span class="w">  </span><span class="c1"># Systemd unit to manage the API server as &#39;skyserver&#39;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/systemd/system/skypilot-api-server.service</span>
+<span class="w">    </span><span class="nt">permissions</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0644&#39;</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root:root</span>
+<span class="w">    </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">[Unit]</span>
+<span class="w">      </span><span class="no">Description=SkyPilot API Server (Docker, loopback-only)</span>
+<span class="w">      </span><span class="no">After=docker.service network-online.target</span>
+<span class="w">      </span><span class="no">Wants=docker.service network-online.target</span>
+
+<span class="w">      </span><span class="no">[Service]</span>
+<span class="w">      </span><span class="no">Type=simple</span>
+<span class="w">      </span><span class="no">User=skyserver</span>
+<span class="w">      </span><span class="no">Group=docker</span>
+<span class="w">      </span><span class="no">WorkingDirectory=/home/skyserver</span>
+<span class="w">      </span><span class="no">ExecStart=/usr/bin/docker run --rm --name skypilot-api-server -p 127.0.0.1:8080:46580 -v /home/skyserver:/root -e SKYPILOT_GLOBAL_CONFIG=/root/.api-server-config.yaml --entrypoint tini berkeleyskypilot/skypilot:0.10.5 -- bash -lc &#39;pip install msrestazure &amp;&amp; sky api start --deploy --foreground&#39;</span>
+<span class="w">      </span><span class="no">ExecStop=/usr/bin/docker stop skypilot-api-server</span>
+<span class="w">      </span><span class="no">Restart=always</span>
+<span class="w">      </span><span class="no">RestartSec=5</span>
+<span class="w">      </span><span class="no"># Hardening</span>
+<span class="w">      </span><span class="no">NoNewPrivileges=yes</span>
+<span class="w">      </span><span class="no">PrivateTmp=yes</span>
+<span class="w">      </span><span class="no">ProtectHome=no</span>
+<span class="w">      </span><span class="no">ProtectSystem=full</span>
+<span class="w">      </span><span class="no">LockPersonality=yes</span>
+<span class="w">      </span><span class="no">CapabilityBoundingSet=</span>
+<span class="w">      </span><span class="no">RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6</span>
+<span class="w">      </span><span class="no">RestrictNamespaces=yes</span>
+<span class="w">      </span><span class="no">RestrictRealtime=yes</span>
+
+<span class="w">      </span><span class="no">[Install]</span>
+<span class="w">      </span><span class="no">WantedBy=multi-user.target</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/local/sbin/harden_ufw_local8080.sh</span>
+<span class="w">    </span><span class="nt">permissions</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;0755&#39;</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root:root</span>
+<span class="w">    </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">#!/usr/bin/env bash</span>
+<span class="w">      </span><span class="no">set -euo pipefail</span>
+<span class="w">      </span><span class="no">if command -v ufw &gt;/dev/null 2&gt;&amp;1; then</span>
+<span class="w">        </span><span class="no">ufw allow OpenSSH || true</span>
+<span class="w">        </span><span class="no"># Deny 8080 from non-local addresses</span>
+<span class="w">        </span><span class="no">ufw deny in to any port 8080 proto tcp || true</span>
+<span class="w">        </span><span class="no">yes | ufw enable || true</span>
+<span class="w">      </span><span class="no">fi</span>
+
+<span class="nt">runcmd</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Enable and start Docker</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">systemctl</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">enable</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--now</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">docker</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># Create and provision the &#39;skyserver&#39; user&#39;s conda environment</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sudo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-u</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">skyserver</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">/usr/local/sbin/install_miniconda_user.sh</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sudo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-u</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">skyserver</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">/usr/local/sbin/bootstrap_sky_env.sh</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># Ensure docker group permissions for the user are active for services</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">usermod</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-aG</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">docker</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">skyserver</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># place dummy api server config</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sudo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-u</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">skyserver</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">touch</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">/home/skyserver/.api-server-config.yaml</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># Start API server</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">systemctl</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">enable</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">--now</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">skypilot-api-server.service</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># apply UFW hardening</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">/usr/local/sbin/harden_ufw_local8080.sh</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># Install skypilot for the user</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sudo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-u</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">regularuser</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">/usr/local/sbin/install_miniconda_user.sh</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sudo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-u</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">regularuser</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">/usr/local/sbin/bootstrap_sky_env.sh</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1"># Create .sky directory and config.yaml for regularuser</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sudo</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-u</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">regularuser</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">bash</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-c</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;mkdir</span><span class="nv"> </span><span class="s">-p</span><span class="nv"> </span><span class="s">/home/regularuser/.sky</span><span class="nv"> </span><span class="s">&amp;&amp;</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">&quot;api_server:&quot;</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">/home/regularuser/.sky/config.yaml</span><span class="nv"> </span><span class="s">&amp;&amp;</span><span class="nv"> </span><span class="s">echo</span><span class="nv"> </span><span class="s">&quot;</span><span class="nv">  </span><span class="s">endpoint:</span><span class="nv"> </span><span class="s">http://localhost:8080&quot;</span><span class="nv"> </span><span class="s">&gt;&gt;</span><span class="nv"> </span><span class="s">/home/regularuser/.sky/config.yaml&#39;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">final_message</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">SkyPilot API server deployed.</span>
+<span class="w">  </span><span class="no">- Container binds to 127.0.0.1:8080 only.</span>
+<span class="w">  </span><span class="no">- Service: systemctl status skypilot-api-server.service</span>
+<span class="w">  </span><span class="no">- Server user env: sudo -iu skyserver &quot;source ~/miniconda3/etc/profile.d/conda.sh &amp;&amp; conda activate sky&quot;</span>
+<span class="w">  </span><span class="no">- Configure cloud creds as &#39;skyserver&#39;:</span>
+<span class="w">      </span><span class="no">activate skypilot conda env:</span>
+<span class="w">        </span><span class="no">source ~/miniconda3/etc/profile.d/conda.sh</span>
+<span class="w">        </span><span class="no">conda activate sky</span>
+<span class="w">      </span><span class="no">and then configure the individual clouds according to the skypilot docs:</span>
+<span class="w">        </span><span class="no">https://docs.skypilot.co/en/latest/getting-started/installation.html</span>
+<span class="w">  </span><span class="no">- To access the dashboard: create an SSH tunnel to this host and open http://localhost:8080/dashboard</span>
+<span class="w">    </span><span class="no">ssh tunnel command:</span>
+<span class="w">      </span><span class="no">ssh -L 8080:localhost:8080 regularuser@&lt;server_ip&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">DistQat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="DOCUMENTATION_INDEX.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QUICK_START.html">Quick Start Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="DEPLOYMENT.html">Setup/Deployment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Skypilot server setup template</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Diagrams</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/ARCHITECTURE.html">Architecture Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/NODE_ARRANGEMENT.html">Node Arrangement Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/TRAINING_FLOW.html">Training Flow Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/FAILOVER.html">Failover Mechanism Diagram</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="DEPLOYMENT.html" title="previous chapter">Setup/Deployment</a></li>
+      <li>Next: <a href="diagrams/ARCHITECTURE.html" title="next chapter">Architecture Diagram</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, SEMRON Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/SKYPILOT_SERVER_SETUP.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

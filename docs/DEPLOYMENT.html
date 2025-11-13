@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Setup/Deployment &#8212; DistQat  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="https://unpkg.com/mermaid@10.4.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Skypilot server setup template" href="SKYPILOT_SERVER_SETUP.html" />
+    <link rel="prev" title="Quick Start Guide" href="QUICK_START.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="setup-deployment">
+<h1>Setup/Deployment<a class="headerlink" href="#setup-deployment" title="Link to this heading">¶</a></h1>
+<p>Since the deployments with this framework are inteded to be decentralized,
+the deployment is not necessarily centrally managed.</p>
+<p>The scripts in this directory provide a way to generate deployment scripts for
+various target scenarios, and platforms.</p>
+<section id="supported-operating-systems">
+<h2>Supported operating systems<a class="headerlink" href="#supported-operating-systems" title="Link to this heading">¶</a></h2>
+<p>(these are the ones which should be tested, similar platforms will likely also work)</p>
+<ul class="simple">
+<li><p><strong>Ubuntu 22.04/24.04</strong> <em>←← For now use Ubuntu 24.04, whenever available, other platforms are not well tested.</em></p></li>
+<li><p>(enterprise linux 8/9 (RHEL, CENT OS, Rocky Linux, Oracle Linux, etc.))</p></li>
+<li><p>(Amazon Linux)</p></li>
+</ul>
+</section>
+<section id="supported-setup-deployment-mechanisms">
+<h2>Supported setup/deployment mechanisms<a class="headerlink" href="#supported-setup-deployment-mechanisms" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://cloud-init.io">cloud-init</a> scripts for deployment on any public/private cloud</p></li>
+<li><p><a class="reference external" href="https://www.skypilot.co">skypilot</a> launch configs for deploying to multi-cloud clusters</p></li>
+<li><p>single file bash script for simply and quickly deploying on any existing server</p></li>
+<li><p>archive of individual scripts for a given target platform</p></li>
+</ul>
+</section>
+<section id="skypilot-resources">
+<h2>SkyPilot resources<a class="headerlink" href="#skypilot-resources" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="deployment">
+<h2>Deployment<a class="headerlink" href="#deployment" title="Link to this heading">¶</a></h2>
+<p>The primary command is <code class="docutils literal notranslate"><span class="pre">create-setup-files.py</span></code>, which creates setup scripts for a given config/machine.</p>
+<p><strong>Please use <code class="docutils literal notranslate"><span class="pre">create-setup-files.py</span> <span class="pre">--help</span></code> to see up to date usage information</strong></p>
+<p>At the moment, most deployments are only semi-automated (mainly providing a quick and easy way of generating the setup scrips, but the code to start and manage instances for a specific target cloud is up to the user — or just by using skypilot for supported platforms)</p>
+</section>
+<section id="deployment-methods">
+<h2>Deployment Methods<a class="headerlink" href="#deployment-methods" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">create-setup-files.py</span></code> script supports 2 differnt deployment schemes:</p>
+<ul class="simple">
+<li><p>Single Stage: For lauching on known systems/already deployed (e.g. bare-metal) servers</p></li>
+<li><p>Two Stage: For launching on partly unknown systems (e.g. a heterogenous cluster of machines)</p></li>
+</ul>
+<div class="mermaid">
+            flowchart TB
+    subgraph RIGHT[&quot;Two-stage deployment&quot;]
+    direction TB
+
+    subgraph R1[&quot;Local machine&quot;]
+      R_setup_local[setup script]
+    end
+
+    subgraph R2[&quot;Target machine&quot;]
+      R_setup_local --&gt;|&quot;generates&quot;| R_setup_1[first stage deploy script]
+      R_setup_1 --&gt;|&quot;runs&quot;| R_setup_target[setup script]
+      R_setup_target --&gt;|&quot;invokes&quot;| R_get2[get_initial_machine_info]
+      R_get2 -. &quot;machine_info&quot; .-&gt; R_setup_target
+      R_setup_target --&gt;|&quot;generates&quot;| R_stage2[second stage deploy script]
+    end
+    R_stage2 --&gt; R_done([setup finished])
+  end
+
+  subgraph LEFT[&quot;Single-step deployment&quot;]
+    direction TB
+
+    subgraph L1[&quot;Local machine&quot;]
+      L_setup[setup script]
+    end
+
+    subgraph L2[&quot;Target machine&quot;]
+      L_get[get_initial_machine_info]
+      L_get -. &quot;machine_info&quot; .-&gt; L_setup
+      L_setup --&gt;|&quot;generates&quot;| L_deploy[deploy script]
+    end
+
+      L_deploy --&gt; L_done([setup finished])
+  end
+
+        </div></section>
+<section id="usage-examples">
+<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading">¶</a></h2>
+<p>The directory <code class="docutils literal notranslate"><span class="pre">docs/tested-platforms</span></code> contains some specific tested manual deployment examples which can provide some context for platforms which you are familiar with.</p>
+<section id="auto-detect-configuration-on-existing-machine">
+<h3>Auto detect configuration on existing machine<a class="headerlink" href="#auto-detect-configuration-on-existing-machine" title="Link to this heading">¶</a></h3>
+<p>To make the configuration for the state of a specific target machine easier, you can run the script <code class="docutils literal notranslate"><span class="pre">get-initial-machine-info.sh</span></code> on any (non-root) shell on the target. (this is specifically designed to work well by just pasting in the entire file content to an interactive shell)</p>
+<p>This will yield you something like:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rocky&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;version_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;8.10&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;id_like&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rhel centos fedora&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;platform_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;platform:el8&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;cpu&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;architecture&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;x86_64&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;vendor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AuthenticAMD&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AMD EPYC 9355P 32-Core Processor&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;cores&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">32</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;extensions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot; fpu vme de ... &quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">404723527680</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;disk_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;root&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">75125227520</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;used&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">75106054144</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;free&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">19173376</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;fhunstock&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2591831359488</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;used&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">956455452672</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;free&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1635375906816</span><span class="p">}},</span>
+<span class="w">    </span><span class="nt">&quot;pci_devices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;address&quot;</span><span class="p">:</span><span class="s2">&quot;c1:00.0&quot;</span><span class="p">,</span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="s2">&quot;3D&quot;</span><span class="p">,</span><span class="nt">&quot;vendor&quot;</span><span class="p">:</span><span class="s2">&quot;10de&quot;</span><span class="p">,</span><span class="nt">&quot;device&quot;</span><span class="p">:</span><span class="s2">&quot;233b&quot;</span><span class="p">}],</span>
+<span class="w">    </span><span class="nt">&quot;driver_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;nvidia&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;driver_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;575.57.08&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;cuda_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;12.9&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;amd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;driver_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;rocm_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">}},</span>
+<span class="w">    </span><span class="nt">&quot;secure_boot_enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;false&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;network&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;has_public_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;is_behind_nat&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;external_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;79.254.12.142&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;user_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foobar&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;has_sudo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;possible&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Which you can use to create a deployment script specifically for that machine type.</p>
+<p>e.g. for a one-of-a-kind deployment on e.g. a bare metal machine just sitting in your office, you can simply generate a script which you can just paste to an ssh session to set up the machine.</p>
+<p><code class="docutils literal notranslate"><span class="pre">setup/create-setup-files.py</span> <span class="pre">--machine-info</span> <span class="pre">&lt;your</span> <span class="pre">machine</span> <span class="pre">info</span> <span class="pre">json&gt;</span> <span class="pre">--local-private-key</span> <span class="pre">keys/ssk-key</span> <span class="pre">--clone-key</span> <span class="pre">keys/clone-key</span> <span class="pre">--target</span> <span class="pre">bash_script</span></code></p>
+<p>or to use the machine info to dump an initial config, to tweak (see next example right below)</p>
+<p><code class="docutils literal notranslate"><span class="pre">setup/create-setup-files.py</span> <span class="pre">--machine-info</span> <span class="pre">tmp/aws-amd-x4large.json</span> <span class="pre">--forward-authorized-keys</span> <span class="pre">--dump-config</span></code></p>
+</section>
+<hr class="docutils" />
+<section id="specify-an-existing-config-file-and-generate-a-cloud-init-file-from-it">
+<h3>Specify an existing config file, and generate a cloud-init file from it<a class="headerlink" href="#specify-an-existing-config-file-and-generate-a-cloud-init-file-from-it" title="Link to this heading">¶</a></h3>
+<p>Given the config file <code class="docutils literal notranslate"><span class="pre">base-config.json</span></code></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;version_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;24.04&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;platform_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;create_new_user&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;gpu_vendor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;nvidia&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;install_drivers&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;open_ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">&quot;source_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git@github.com:SEMRON/aether.git&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ubuntu&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;management_user&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>you can use e.g.</p>
+<p><code class="docutils literal notranslate"><span class="pre">setup/create-setup-files.py</span> <span class="pre">--local-private-key</span> <span class="pre">keys/ssk-key</span> <span class="pre">--clone-key</span> <span class="pre">keys/clone-key</span> <span class="pre">--config</span> <span class="pre">base-config.json</span> <span class="pre">--target</span> <span class="pre">cloud_init</span></code></p>
+<p>to create a <a class="reference external" href="https://cloud-init.io">cloud-config</a> which can be used with many cloud providers to spin up instances.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">DistQat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="DOCUMENTATION_INDEX.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QUICK_START.html">Quick Start Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setup/Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SKYPILOT_SERVER_SETUP.html">Skypilot server setup template</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Diagrams</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/ARCHITECTURE.html">Architecture Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/NODE_ARRANGEMENT.html">Node Arrangement Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/TRAINING_FLOW.html">Training Flow Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/FAILOVER.html">Failover Mechanism Diagram</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="QUICK_START.html" title="previous chapter">Quick Start Guide</a></li>
+      <li>Next: <a href="SKYPILOT_SERVER_SETUP.html" title="next chapter">Skypilot server setup template</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, SEMRON Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/DEPLOYMENT.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

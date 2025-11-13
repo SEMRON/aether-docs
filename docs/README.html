@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Documentation &#8212; DistQat  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Quick Start Guide" href="QUICK_START.html" />
+    <link rel="prev" title="Index" href="DOCUMENTATION_INDEX.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="documentation">
+<h1>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h1>
+<div align="center">
+<p><strong>Distributed Quantization-Aware Training Framework</strong></p>
+<p>A decentralized framework for training large models with model parallelism, automatic failover, and communication-efficient optimization.</p>
+<p><a class="reference external" href="https://www.python.org/downloads/"><img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10+-blue.svg" /></a></p>
+</div>
+<hr class="docutils" />
+<section id="table-of-contents">
+<h2>📑 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#quick-start">Quick Start</a></p></li>
+<li><p><a class="reference internal" href="#overview">Overview</a></p></li>
+<li><p><a class="reference internal" href="#key-features">Key Features</a></p></li>
+<li><p><a class="reference internal" href="#architecture">Architecture</a></p>
+<ul>
+<li><p><a class="reference internal" href="#system-components">System Components</a></p></li>
+<li><p><a class="reference internal" href="#how-it-works">How It Works</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#installation">Installation</a></p></li>
+<li><p><a class="reference internal" href="#configuration">Configuration</a></p></li>
+<li><p><a class="reference internal" href="#usage">Usage</a></p>
+<ul>
+<li><p><a class="reference internal" href="#local-training">Local Training</a></p></li>
+<li><p><a class="reference internal" href="#distributed-training">Distributed Training</a></p></li>
+<li><p><a class="reference internal" href="#cloud-deployment-with-skypilot">Cloud Deployment with SkyPilot</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#examples">Examples</a></p></li>
+<li><p><a class="reference internal" href="#troubleshooting-faq">Troubleshooting &amp; FAQ</a></p></li>
+<li><p><a class="reference internal" href="#advanced-topics">Advanced Topics</a></p></li>
+<li><p><a class="reference internal" href="#citations">Citations</a></p></li>
+<li><p><a class="reference internal" href="#acknowledgements">Acknowledgements</a></p></li>
+<li><p><a class="reference internal" href="#contact">Contact</a></p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="quick-start">
+<span id="id1"></span><h2>🚀 Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h2>
+<p><strong>New to DistQat?</strong> Check out our <a class="reference internal" href="QUICK_START.html"><span class="std std-doc">Quick Start Guide</span></a> to get up and running in 5 minutes!</p>
+<p>For detailed documentation, continue reading below.</p>
+<hr class="docutils" />
+</section>
+<section id="overview">
+<span id="id2"></span><h2>✨ Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><strong>DistQat</strong> (Distributed Quantization-Aware Training) is a framework for training neural networks across distributed nodes using model parallelism and quantization-aware techniques. Built on top of <a class="reference external" href="https://github.com/learning-at-home/hivemind">Hivemind</a>, DistQat enables:</p>
+<ul class="simple">
+<li><p><strong>Model Parallel Training</strong>: Split large models across multiple nodes with pipeline parallelism</p></li>
+<li><p><strong>Automatic Node Discovery</strong>: Dynamically discover and connect to available compute resources</p></li>
+<li><p><strong>Fault Tolerance</strong>: Automatic failover when nodes disconnect or fail</p></li>
+<li><p><strong>Communication Efficiency</strong>: Uses DiLoCo (Distributed Low-Communication) optimization to minimize network overhead</p></li>
+<li><p><strong>Quantization Support</strong>: Train with quantization-aware techniques</p></li>
+</ul>
+<p>This framework is particularly useful for:</p>
+<ul class="simple">
+<li><p>Training models that don’t fit on a single GPU</p></li>
+<li><p>Utilizing heterogeneous compute resources across the internet</p></li>
+<li><p>Experimenting with distributed training protocols</p></li>
+<li><p>Research in decentralized AI training</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+<section id="key-features">
+<span id="id3"></span><h2>🚀 Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
+<section id="distributed-architecture">
+<h3>Distributed Architecture<a class="headerlink" href="#distributed-architecture" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Swarm-based P2P Network</strong>: Nodes communicate via DHT (Distributed Hash Table) for peer discovery</p></li>
+<li><p><strong>Dynamic Node Joining/Leaving</strong>: Add or remove compute nodes without stopping training</p></li>
+<li><p><strong>Automatic Pipeline Discovery</strong>: System automatically discovers available pipeline stages and forms complete training paths</p></li>
+</ul>
+</section>
+<section id="fault-tolerance">
+<h3>Fault Tolerance<a class="headerlink" href="#fault-tolerance" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Automatic Failover</strong>: When a node fails, the system automatically reassigns work to healthy nodes if possible</p></li>
+<li><p><strong>Checkpoint &amp; Resume</strong>: Periodic model checkpointing training resumption</p></li>
+<li><p><strong>Graceful Degradation</strong>: Training continues even when some nodes are unavailable</p></li>
+</ul>
+</section>
+<section id="communication-efficiency">
+<h3>Communication Efficiency<a class="headerlink" href="#communication-efficiency" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>DiLoCo Optimization</strong>: Decoupled inner and outer optimizers minimize synchronization overhead</p></li>
+<li><p><strong>Configurable Sync Intervals</strong>: Tune communication frequency vs. convergence speed tradeoffs</p></li>
+</ul>
+</section>
+<section id="monitoring-observability">
+<h3>Monitoring &amp; Observability<a class="headerlink" href="#monitoring-observability" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Wandb Integration</strong>: Real-time metrics logging and visualization</p></li>
+<li><p><strong>Per-Node Metrics</strong>: Track performance of individual compute nodes</p></li>
+<li><p><strong>DHT State Monitoring</strong>: Observe network topology and node health</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+</section>
+<section id="architecture">
+<span id="id4"></span><h2>🔬 Architecture<a class="headerlink" href="#architecture" title="Link to this heading">¶</a></h2>
+<section id="system-components">
+<span id="id5"></span><h3>System Components<a class="headerlink" href="#system-components" title="Link to this heading">¶</a></h3>
+<p>DistQat consists of four main components that work together to enable distributed training:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                        DHT Network                          │
+│              (Distributed Hash Table for P2P)               │
+└─────────────────────────────────────────────────────────────┘
+         ▲              ▲              ▲              ▲
+         │              │              │              │
+    ┌────┴────┐    ┌────┴────┐    ┌────┴────┐    ┌────┴────┐
+    │ Monitor │    │ Client  │    │ Server  │    │ Server  │
+    │         │    │         │    │(Stage 0)│    │(Stage 1)│
+    └─────────┘    └────┬────┘    └─────────┘    └─────────┘
+                        │
+                   ┌────┴────┐
+                   │ Trainer │
+                   │ (spawns │
+                   │dynamical│
+                   │   ly)   │
+                   └─────────┘
+</pre></div>
+</div>
+<blockquote>
+<div><p>📊 <strong><a class="reference internal" href="diagrams/ARCHITECTURE.html"><span class="std std-doc">Detailed Architecture Diagram →</span></a></strong><br />
+See the full architecture diagram with Mermaid code and detailed component breakdown.</p>
+</div></blockquote>
+<section id="monitor-src-distqat-distributed-monitor-py">
+<h4>1. <strong>Monitor</strong> (<code class="docutils literal notranslate"><span class="pre">src/distqat/distributed/monitor.py</span></code>)<a class="headerlink" href="#monitor-src-distqat-distributed-monitor-py" title="Link to this heading">¶</a></h4>
+<p>The monitor is the entry point that initializes the DHT network and tracks system state.</p>
+<p><strong>Responsibilities:</strong></p>
+<ul class="simple">
+<li><p>Create and maintain the DHT node</p></li>
+<li><p>Store and share initial peer addresses for other nodes to connect</p></li>
+<li><p>Collect and aggregate metrics from trainers</p></li>
+<li><p>Log metrics to Wandb for visualization</p></li>
+</ul>
+<p><strong>Key Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">refresh_period</span></code>: How often to poll for metrics (default: 300s)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">store_ip_addresses_path</span></code>: File path to save initial peer addresses</p></li>
+</ul>
+</section>
+<section id="server-expert-src-distqat-distributed-server">
+<h4>2. <strong>Server/Expert</strong> (<code class="docutils literal notranslate"><span class="pre">src/distqat/distributed/server/</span></code>)<a class="headerlink" href="#server-expert-src-distqat-distributed-server" title="Link to this heading">¶</a></h4>
+<p>Servers host individual stages of the model pipeline (e.g., “front” and “back” of a ResNet).</p>
+<p><strong>Responsibilities:</strong></p>
+<ul class="simple">
+<li><p>Host a specific pipeline stage (expert)</p></li>
+<li><p>Register expert UID in the DHT for discovery</p></li>
+<li><p>Execute forward and backward passes for assigned stage</p></li>
+<li><p>Participate in DiLoCo parameter synchronization</p></li>
+<li><p>Maintain checkpoints and model state</p></li>
+<li><p>Handle automatic reassignment when nodes fail</p></li>
+</ul>
+<p><strong>Key Concepts:</strong></p>
+<ul class="simple">
+<li><p><strong>Expert UID</strong>: Format <code class="docutils literal notranslate"><span class="pre">{stage}.0.{expert_index}.0</span></code> (e.g., “front.0.0.0”)</p></li>
+<li><p><strong>Stage Index</strong>: Which stage in the pipeline (0, 1, 2, …)</p></li>
+<li><p><strong>Expert Index</strong>: Which replica of this stage (for redundancy/parallelism)</p></li>
+<li><p><strong>Auto-discovery</strong>: Servers can automatically find gaps in the pipeline to fill</p></li>
+</ul>
+</section>
+<section id="client-src-distqat-distributed-client-py">
+<h4>3. <strong>Client</strong> (<code class="docutils literal notranslate"><span class="pre">src/distqat/distributed/client.py</span></code>)<a class="headerlink" href="#client-src-distqat-distributed-client-py" title="Link to this heading">¶</a></h4>
+<p>The client discovers available experts and dynamically spawns trainers.</p>
+<p><strong>Responsibilities:</strong></p>
+<ul class="simple">
+<li><p>Poll DHT to discover available experts</p></li>
+<li><p>Find complete pipeline paths (all stages available)</p></li>
+<li><p>Spawn trainer processes for each complete path</p></li>
+<li><p>Load balance across available experts</p></li>
+<li><p>Monitor trainer health and restart if needed</p></li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul class="simple">
+<li><p><strong>Dynamic Trainer Spawning</strong>: Automatically creates trainers when pipelines become available</p></li>
+<li><p><strong>Expert Balancing</strong>: Distributes work across multiple replicas of the same stage</p></li>
+<li><p><strong>Health Monitoring</strong>: Detects and recovers from trainer failures</p></li>
+</ul>
+</section>
+<section id="trainer-src-distqat-distributed-trainer-py">
+<h4>4. <strong>Trainer</strong> (<code class="docutils literal notranslate"><span class="pre">src/distqat/distributed/trainer.py</span></code>)<a class="headerlink" href="#trainer-src-distqat-distributed-trainer-py" title="Link to this heading">¶</a></h4>
+<p>Trainers execute the actual training loop using remote experts.</p>
+<p><strong>Responsibilities:</strong></p>
+<ul class="simple">
+<li><p>Load dataset and create data loaders</p></li>
+<li><p>Execute forward pass through remote experts</p></li>
+<li><p>Compute loss and execute backward pass</p></li>
+<li><p>Report metrics to the monitor</p></li>
+</ul>
+<p><strong>Training Modes:</strong></p>
+<ul class="simple">
+<li><p><strong>Distributed Mode</strong>: Uses remote experts via SwarmModel</p></li>
+<li><p><strong>Baseline Mode</strong>: Uses local model computation via SwarmBaselineModel (for comparison)</p></li>
+</ul>
+</section>
+</section>
+<section id="how-it-works">
+<span id="id6"></span><h3>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h3>
+<section id="initial-setup">
+<h4>Initial Setup<a class="headerlink" href="#initial-setup" title="Link to this heading">¶</a></h4>
+<ol class="arabic simple">
+<li><p><strong>Monitor starts</strong> and creates DHT, writes peer address to file</p></li>
+<li><p><strong>Client reads</strong> peer address and connects to DHT</p></li>
+<li><p><strong>Data Server starts</strong> Data server starts and streams data to shared memory</p></li>
+<li><p><strong>Servers start</strong>, connect to DHT, and register their expert UIDs</p></li>
+<li><p><strong>Client discovers</strong> available experts and forms complete pipelines</p></li>
+<li><p><strong>Trainers spawn</strong> dynamically for each complete pipeline</p></li>
+</ol>
+<blockquote>
+<div><p>📊 <strong><a class="reference internal" href="diagrams/NODE_ARRANGEMENT.html"><span class="std std-doc">Node Arrangement Diagram →</span></a></strong><br />
+See detailed node arrangement, port assignments, and replica distribution patterns.</p>
+</div></blockquote>
+</section>
+<section id="training-flow">
+<h4>Training Flow<a class="headerlink" href="#training-flow" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Trainer                    Server (Stage 0)         Server (Stage 1)
+   │                              │                         │
+   ├──── Forward (input) ────────&gt;│                         │
+   │                              ├──── Forward (hidden) ──&gt;│
+   │                              │                         │
+   │&lt;──────────────────────────── Output ───────────────────┤
+   │                              │                         │
+   ├──── Backward (grad) ──────────────────────────────────&gt;│
+   │                              │&lt;──── Backward (grad) ───┤
+   │&lt;──── Backward (grad) ────────┤                         │
+   │                              │                         │
+   ├──── DiLoCo Sync (every N steps) ─────────────────────&gt; │
+                     (between servers of the same stage)
+</pre></div>
+</div>
+<p><strong>Inner Loop (Local Optimization):</strong></p>
+<ol class="arabic simple">
+<li><p>Trainer sends batch to first server stage</p></li>
+<li><p>Each stage processes and forwards to next stage</p></li>
+<li><p>Final stage sends logits to Trainer</p></li>
+<li><p>Trainer calculates loss and starts backward pass</p></li>
+<li><p>Gradients flow backward through stages</p></li>
+<li><p>Each server updates its local parameters</p></li>
+<li><p>Repeat for <code class="docutils literal notranslate"><span class="pre">inner_steps</span></code> iterations</p></li>
+</ol>
+<p><strong>Outer Loop (Global Synchronization):</strong></p>
+<ol class="arabic simple">
+<li><p>After <code class="docutils literal notranslate"><span class="pre">inner_steps</span></code>, servers of the same stage synchronize parameters</p></li>
+<li><p>Uses outer optimizer (typically SGD with momentum)</p></li>
+<li><p>Averages updates across all replicas of each stage</p></li>
+<li><p>Updates global model state</p></li>
+</ol>
+<blockquote>
+<div><p>📊 <strong><a class="reference internal" href="diagrams/TRAINING_FLOW.html"><span class="std std-doc">Training Flow Diagram →</span></a></strong><br />
+See detailed sequence diagrams and timing charts for forward/backward passes.</p>
+</div></blockquote>
+</section>
+<section id="failover-mechanism">
+<h4>Failover Mechanism<a class="headerlink" href="#failover-mechanism" title="Link to this heading">¶</a></h4>
+<p>When a server node fails:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Before Failure:
+Trainer → Server A (front.0.0.0) → Server B (back.0.0.0)
+
+After Server B Fails:
+Trainer → Server A (front.0.0.0) → [waiting for new back stage]
+
+After New Server C Joins:
+Trainer → Server A (front.0.0.0) → Server C (back.0.1.0)
+</pre></div>
+</div>
+<blockquote>
+<div><p>📊 <strong><a class="reference internal" href="diagrams/FAILOVER.html"><span class="std std-doc">Failover Mechanism Diagram →</span></a></strong><br />
+See detailed state diagrams, timeline charts, and topology changes during failover.</p>
+</div></blockquote>
+<p><strong>Failover Process:</strong></p>
+<ol class="arabic simple">
+<li><p>Trainer detects server unavailability (timeout)</p></li>
+<li><p>Client marks expert as unavailable</p></li>
+<li><p>Client searches for alternative experts in DHT</p></li>
+<li><p>New server automatically discovers gap and fills it</p></li>
+<li><p>New server loads latest checkpoint</p></li>
+<li><p>Training resumes with new topology</p></li>
+</ol>
+<p><strong>Automatic Gap Discovery:</strong></p>
+<ul class="simple">
+<li><p>Servers scan DHT for missing expert indices</p></li>
+<li><p>Automatically assign themselves to unfilled positions</p></li>
+<li><p>Load most recent checkpoint for that stage</p></li>
+<li><p>Register in DHT and begin accepting requests</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+</section>
+</section>
+<section id="installation">
+<span id="id7"></span><h2>🔧 Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Python</strong>: 3.10, 3.11, or 3.12</p></li>
+<li><p><strong>CUDA</strong>: For GPU support (recommended)</p></li>
+<li><p><strong>Operating System</strong>: Linux (tested on Ubuntu and Rocky Linux 8.10)</p></li>
+</ul>
+</section>
+<section id="quick-start-ubuntu">
+<h3>Quick Start (Ubuntu)<a class="headerlink" href="#quick-start-ubuntu" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install uv package manager</span>
+curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Create virtual environment</span>
+uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="o">=</span><span class="m">3</span>.10
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+
+<span class="c1"># Install PyTorch with CUDA support</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>torch<span class="w"> </span>torchvision<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu129
+
+<span class="c1"># Install DistQat</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+
+<span class="c1"># For development (editable install)</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--editable<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="installing-hivemind-dependency">
+<h3>Installing Hivemind Dependency<a class="headerlink" href="#installing-hivemind-dependency" title="Link to this heading">¶</a></h3>
+<p>DistQat depends on Hivemind for P2P networking. You have two options:</p>
+<section id="option-a-use-pre-compiled-binary-easier">
+<h4>Option A: Use Pre-compiled Binary (Easier)<a class="headerlink" href="#option-a-use-pre-compiled-binary-easier" title="Link to this heading">¶</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init<span class="w"> </span>externals/hivemind
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>externals/hivemind
+</pre></div>
+</div>
+</section>
+<section id="option-b-build-from-source-required-for-some-systems">
+<h4>Option B: Build from Source (Required for some systems)<a class="headerlink" href="#option-b-build-from-source-required-for-some-systems" title="Link to this heading">¶</a></h4>
+<p>This option requires Go 1.25+ for building <code class="docutils literal notranslate"><span class="pre">go-libp2p-daemon</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize hivemind submodule</span>
+git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init<span class="w"> </span>externals/hivemind
+
+<span class="c1"># Install Go</span>
+wget<span class="w"> </span>https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
+sudo<span class="w"> </span>tar<span class="w"> </span>-C<span class="w"> </span>/usr/local<span class="w"> </span>-xzf<span class="w"> </span>go1.25.0.linux-amd64.tar.gz
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/usr/local/go/bin
+
+<span class="c1"># Install hivemind requirements first</span>
+wget<span class="w"> </span>-O<span class="w"> </span>/tmp/hivemind_requirements.txt<span class="w"> </span>https://raw.githubusercontent.com/learning-at-home/hivemind/937198fd364d20edeafd1044b12c3b88521d7701/requirements.txt
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>/tmp/hivemind_requirements.txt
+
+<span class="c1"># Build and install hivemind</span>
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pip
+pip<span class="w"> </span>install<span class="w"> </span>--global-option<span class="o">=</span>build_py<span class="w"> </span>--global-option<span class="o">=</span><span class="s2">&quot;--buildgo&quot;</span><span class="w"> </span>--no-use-pep517<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>git+https://github.com/learning-at-home/hivemind.git@937198fd364d20edeafd1044b12c3b88521d7701
+</pre></div>
+</div>
+</section>
+</section>
+<section id="verify-installation">
+<h3>Verify Installation<a class="headerlink" href="#verify-installation" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import distqat; import hivemind; print(&#39;DistQat installed successfully!&#39;)&quot;</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="configuration">
+<span id="id8"></span><h2>🔧 Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
+<p>DistQat uses YAML configuration files to define training parameters, model architecture, and network settings.</p>
+<section id="configuration-file-structure">
+<h3>Configuration File Structure<a class="headerlink" href="#configuration-file-structure" title="Link to this heading">¶</a></h3>
+<p>Example configuration (<code class="docutils literal notranslate"><span class="pre">configs/resnet18.yaml</span></code>):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># WandB logging</span>
+<span class="nt">wandb_project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;distqat&quot;</span>
+<span class="nt">experiment_prefix</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;resnet18&quot;</span>
+
+<span class="c1"># Dataset configuration</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dataset_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;uoft-cs/cifar10&quot;</span>
+<span class="w">  </span><span class="nt">dataset_split</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;train&quot;</span>
+<span class="w">  </span><span class="nt">task_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cv&quot;</span>
+<span class="w">  </span><span class="nt">num_workers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">precision</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;fp16-mixed&quot;</span>
+<span class="w">  </span><span class="nt">num_channels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">img_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">32</span>
+
+<span class="c1"># DiLoCo optimization settings</span>
+<span class="nt">diloco</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">inner_optim</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;adam&quot;</span>
+<span class="w">    </span><span class="nt">adam_lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4e-4</span>
+<span class="w">    </span><span class="nt">adam_weight_decay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">  </span><span class="nt">outer_optim</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sgd&quot;</span>
+<span class="w">    </span><span class="nt">sgd_lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.07</span>
+<span class="w">    </span><span class="nt">sgd_momentum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
+<span class="w">    </span><span class="nt">sgd_nesterov</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">inner_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500</span><span class="w">      </span><span class="c1"># Local optimization steps</span>
+<span class="w">  </span><span class="nt">outer_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w">      </span><span class="c1"># Global synchronization steps</span>
+<span class="w">  </span><span class="nt">batch_size_per_step</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">64</span>
+<span class="w">  </span><span class="nt">averaging_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60.0</span>
+
+<span class="c1"># Model pipeline stages</span>
+<span class="nt">model_pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;resnet18.front&quot;</span>
+<span class="w">      </span><span class="nt">num_classes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;resnet18.back&quot;</span>
+<span class="w">      </span><span class="nt">num_classes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">forward_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90.0</span>
+<span class="w">  </span><span class="nt">backward_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180.0</span>
+
+<span class="c1"># Checkpointing</span>
+<span class="nt">param_mirror</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">refresh_every</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">  </span><span class="nt">checkpoint_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;checkpoints/resnet18&quot;</span>
+
+<span class="c1"># Device settings</span>
+<span class="nt">world_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cuda&quot;</span>
+<span class="nt">max_expert_index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration-sections-explained">
+<h3>Configuration Sections Explained<a class="headerlink" href="#configuration-sections-explained" title="Link to this heading">¶</a></h3>
+<section id="data-configuration">
+<h4>Data Configuration<a class="headerlink" href="#data-configuration" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset_name</span></code>: HuggingFace dataset identifier</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">task_type</span></code>: [“cv”, “llm” , “speech”, “image_gen”, “node_pred”, “rl”]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">precision</span></code>: Training precision (“fp16-mixed”, “bf16”, “fp32”)</p></li>
+</ul>
+</section>
+<section id="diloco-configuration">
+<h4>DiLoCo Configuration<a class="headerlink" href="#diloco-configuration" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">inner_steps</span></code>: Number of local SGD steps before synchronization</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">outer_steps</span></code>: Total number of synchronization rounds</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_size_per_step</span></code>: Batch size for each training step</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inner_optim</span></code>: Local optimizer settings (Adam, AdamW, SGD)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">outer_optim</span></code>: Global optimizer for parameter averaging (typically SGD with momentum)</p></li>
+</ul>
+</section>
+<section id="model-pipeline-configuration">
+<h4>Model Pipeline Configuration<a class="headerlink" href="#model-pipeline-configuration" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pipeline</span></code>: List of model stages in order</p>
+<ul>
+<li><p>Each stage defined by <code class="docutils literal notranslate"><span class="pre">model_name</span></code> (format: <code class="docutils literal notranslate"><span class="pre">{model}.{stage}</span></code>)</p></li>
+<li><p>Available models: resnet18, resnet50, resnet101, distilgpt2, gptneo, wav2vec2</p></li>
+<li><p>Available stages: front, back, head, body, tail, full</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="network-configuration-cli-arguments">
+<h4>Network Configuration (CLI arguments)<a class="headerlink" href="#network-configuration-cli-arguments" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_peers</span></code>: Comma-separated list of DHT peer addresses</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">host_maddrs</span></code>: Multiaddress for listening</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">announce_maddrs</span></code>: Multiaddress to announce to other peers</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+</section>
+</section>
+<section id="usage">
+<span id="id9"></span><h2>🚀 Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<section id="local-training">
+<span id="id10"></span><h3>Local Training<a class="headerlink" href="#local-training" title="Link to this heading">¶</a></h3>
+<p>Train everything on a single machine (useful for testing):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ensure WandB is configured (or disable it in config)</span>
+wandb<span class="w"> </span>login
+
+<span class="c1"># Start training</span>
+python<span class="w"> </span>run_local.py
+</pre></div>
+</div>
+<p>This will:</p>
+<ol class="arabic simple">
+<li><p>Start a monitor process</p></li>
+<li><p>Start a client process that spawns trainers</p></li>
+<li><p>Use local model computation (baseline mode)</p></li>
+</ol>
+<p>Logs are saved to <code class="docutils literal notranslate"><span class="pre">logs/{experiment_prefix}/</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">monitor.log</span></code>: Monitor process logs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">client.log</span></code>: Client discovery and trainer management logs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trainer_*.log</span></code>: Individual trainer logs</p></li>
+</ul>
+</section>
+<section id="distributed-training">
+<span id="id11"></span><h3>Distributed Training<a class="headerlink" href="#distributed-training" title="Link to this heading">¶</a></h3>
+<p>Train across multiple machines using remote experts.</p>
+<section id="step-1-start-monitor-client-machine-1">
+<h4>Step 1: Start Monitor &amp; Client (Machine 1)<a class="headerlink" href="#step-1-start-monitor-client-machine-1" title="Link to this heading">¶</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set your public IP address</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PUBLIC_IP</span><span class="o">=</span><span class="s2">&quot;XX.XXX.XXX.XX&quot;</span>
+
+<span class="c1"># Start the orchestrator (monitor + client)</span>
+python<span class="w"> </span>start_trainer_client.py<span class="w"> </span>--public-ip<span class="w"> </span><span class="si">${</span><span class="nv">PUBLIC_IP</span><span class="si">}</span>
+</pre></div>
+</div>
+<p>Monitor the logs to find the initial peer address:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tail<span class="w"> </span>-f<span class="w"> </span>logs/<span class="o">{</span>experiment_prefix<span class="o">}</span>/initial_peers.txt
+</pre></div>
+</div>
+<p>You should see output like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">ip4</span><span class="o">/</span><span class="n">XX</span><span class="o">.</span><span class="n">XXX</span><span class="o">.</span><span class="n">XXX</span><span class="o">.</span><span class="n">XX</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="mi">50000</span><span class="o">/</span><span class="n">p2p</span><span class="o">/</span><span class="n">QmXAm92bj4biVVj6zHvj2ei5YiqqrW3brcVunYZ6HTipej</span><span class="p">,</span><span class="o">/</span><span class="n">ip4</span><span class="o">/</span><span class="mf">127.0.0.1</span><span class="o">/</span><span class="n">tcp</span><span class="o">/</span><span class="mi">50000</span><span class="o">/</span><span class="n">p2p</span><span class="o">/</span><span class="n">QmXAm92bj4biVVj6zHvj2ei5YiqqrW3brcVunYZ6HTipej</span>
+</pre></div>
+</div>
+<p>The first address is for remote connections, the second for local.</p>
+</section>
+<section id="step-2-start-servers-machine-2">
+<h4>Step 2: Start Servers (Machine 2+)<a class="headerlink" href="#step-2-start-servers-machine-2" title="Link to this heading">¶</a></h4>
+<p>On additional machines, start server processes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set environment variables</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PUBLIC_IP</span><span class="o">=</span><span class="s2">&quot;YY.YYY.YYY.YY&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">INITIAL_PEERS</span><span class="o">=</span><span class="s2">&quot;/ip4/XX.XXX.XXX.XX/tcp/50000/p2p/QmXAm92bj4biVVj6zHvj2ei5YiqqrW3brcVunYZ6HTipej&quot;</span>
+
+<span class="c1"># Start multiple servers</span>
+python<span class="w"> </span>start_servers.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--public-ip<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">PUBLIC_IP</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-servers<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--initial-peers<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INITIAL_PEERS</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--num-servers</span></code>: Number of server instances to start on this machine</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--public-ip</span></code>: Public IP address for remote connections</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--initial-peers</span></code>: Peer address from Step 1 (comma-separated for multiple)</p></li>
+</ul>
+</section>
+<section id="step-3-monitor-training">
+<h4>Step 3: Monitor Training<a class="headerlink" href="#step-3-monitor-training" title="Link to this heading">¶</a></h4>
+<p>Watch the client logs to see trainers being spawned:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tail<span class="w"> </span>-f<span class="w"> </span>logs/<span class="o">{</span>experiment_prefix<span class="o">}</span>/client.log
+</pre></div>
+</div>
+<p>View metrics in WandB dashboard (if configured).</p>
+</section>
+</section>
+<section id="cloud-deployment-with-skypilot">
+<span id="id12"></span><h3>Cloud Deployment with SkyPilot<a class="headerlink" href="#cloud-deployment-with-skypilot" title="Link to this heading">¶</a></h3>
+<p>Deploy DistQat on cloud providers using <a class="reference external" href="https://skypilot.readthedocs.io/">SkyPilot</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set WandB API key</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">WANDB_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-wandb-key&quot;</span>
+
+<span class="c1"># Launch trainer + client (first run)</span>
+sky<span class="w"> </span>launch<span class="w"> </span>-c<span class="w"> </span>trainer-cluster<span class="w"> </span>./skypilot/start_trainer_client.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--secret<span class="w"> </span>WANDB_API_KEY
+
+<span class="c1"># Get the initial peer address from logs</span>
+<span class="c1"># Then launch server workers</span>
+sky<span class="w"> </span>launch<span class="w"> </span>-c<span class="w"> </span>server-cluster<span class="w"> </span>./skypilot/start_servers.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--env<span class="w"> </span><span class="nv">NUM_SERVERS</span><span class="o">=</span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--env<span class="w"> </span><span class="nv">INITIAL_PEERS</span><span class="o">=</span><span class="s2">&quot;/ip4/.../tcp/50000/p2p/...&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--secret<span class="w"> </span>WANDB_API_KEY
+
+<span class="c1"># For subsequent runs (skip setup)</span>
+sky<span class="w"> </span>launch<span class="w"> </span>-c<span class="w"> </span>trainer-cluster<span class="w"> </span>./skypilot/start_trainer_client.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--secret<span class="w"> </span>WANDB_API_KEY<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--no-setup
+
+sky<span class="w"> </span>launch<span class="w"> </span>-c<span class="w"> </span>server-cluster<span class="w"> </span>./skypilot/start_servers.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--env<span class="w"> </span><span class="nv">NUM_SERVERS</span><span class="o">=</span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--env<span class="w"> </span><span class="nv">INITIAL_PEERS</span><span class="o">=</span><span class="s2">&quot;/ip4/.../tcp/50000/p2p/...&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--secret<span class="w"> </span>WANDB_API_KEY<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--no-setup
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="examples">
+<span id="id13"></span><h2>📚 Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<section id="example-1-training-resnet18-on-cifar-10">
+<h3>Example 1: Training ResNet18 on CIFAR-10<a class="headerlink" href="#example-1-training-resnet18-on-cifar-10" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use provided config</span>
+python<span class="w"> </span>run_local.py
+<span class="c1"># This uses configs/resnet18.yaml by default</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-training-distilgpt2">
+<h3>Example 2: Training DistilGPT2<a class="headerlink" href="#example-2-training-distilgpt2" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># configs/distilgpt2.yaml</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dataset_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;wikitext&quot;</span>
+<span class="w">  </span><span class="nt">dataset_config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;wikitext-2-raw-v1&quot;</span>
+<span class="w">  </span><span class="nt">task_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nlp&quot;</span>
+
+<span class="nt">model_pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;distilgpt2.head&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;distilgpt2.body&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">model_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;distilgpt2.tail&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>run_local.py<span class="w"> </span>--config-path<span class="w"> </span>configs/distilgpt2.yaml
+</pre></div>
+</div>
+<p>This script:</p>
+<ol class="arabic simple">
+<li><p>Starts monitor, client, and multiple servers</p></li>
+<li><p>After 20 seconds, kills one server</p></li>
+<li><p>System automatically detects failure and reassigns work</p></li>
+<li><p>New servers can be added dynamically</p></li>
+</ol>
+<p>Watch the logs to observe failover in action:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tail<span class="w"> </span>-f<span class="w"> </span>logs/<span class="o">{</span>experiment_prefix<span class="o">}</span>/client.log
+tail<span class="w"> </span>-f<span class="w"> </span>logs/<span class="o">{</span>experiment_prefix<span class="o">}</span>/server_*.log
+</pre></div>
+</div>
+</section>
+<section id="example-3-adding-removing-nodes-dynamically">
+<h3>Example 3: Adding/Removing Nodes Dynamically<a class="headerlink" href="#example-3-adding-removing-nodes-dynamically" title="Link to this heading">¶</a></h3>
+<p>While training is running:</p>
+<p><strong>Add a new server node:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>start_servers.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--public-ip<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">PUBLIC_IP</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-servers<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--initial-peers<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INITIAL_PEERS</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p><strong>Remove a server node:</strong>
+Simply kill the server process (Ctrl+C or <code class="docutils literal notranslate"><span class="pre">pkill</span></code>). The system will automatically reassign work.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="troubleshooting-faq">
+<span id="id14"></span><h2>🔍 Troubleshooting &amp; FAQ<a class="headerlink" href="#troubleshooting-faq" title="Link to this heading">¶</a></h2>
+<section id="common-issues">
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading">¶</a></h3>
+<section id="leftover-processes-from-previous-run">
+<h4>1. Leftover Processes from Previous Run<a class="headerlink" href="#leftover-processes-from-previous-run" title="Link to this heading">¶</a></h4>
+<p><strong>Symptom:</strong> New run fails with “address already in use” or hanging connections</p>
+<p><strong>Solution:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Kill all distqat processes</span>
+pkill<span class="w"> </span>-f<span class="w"> </span>distqat
+
+<span class="c1"># Or more specifically</span>
+pkill<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;python.*start_trainer_client.py&quot;</span>
+pkill<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;python.*start_servers.py&quot;</span>
+pkill<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;python.*monitor.py&quot;</span>
+
+<span class="c1"># Check if ports are still in use</span>
+lsof<span class="w"> </span>-i<span class="w"> </span>:50000<span class="w">  </span><span class="c1"># Monitor port</span>
+lsof<span class="w"> </span>-i<span class="w"> </span>:50500<span class="w">  </span><span class="c1"># Server port</span>
+lsof<span class="w"> </span>-i<span class="w"> </span>:51000<span class="w">  </span><span class="c1"># Client port</span>
+lsof<span class="w"> </span>-i<span class="w"> </span>:52555<span class="w">  </span><span class="c1"># Dataserver port</span>
+
+<span class="c1"># If needed, kill processes by port</span>
+<span class="nb">kill</span><span class="w"> </span>-9<span class="w"> </span><span class="k">$(</span>lsof<span class="w"> </span>-t<span class="w"> </span>-i:50000<span class="k">)</span>
+</pre></div>
+</div>
+</section>
+<section id="servers-not-discovered">
+<h4>2. Servers Not Discovered<a class="headerlink" href="#servers-not-discovered" title="Link to this heading">¶</a></h4>
+<p><strong>Symptom:</strong> Client doesn’t spawn trainers, logs show “No complete pipelines found”</p>
+<p><strong>Possible Causes:</strong></p>
+<ul class="simple">
+<li><p>Servers haven’t finished initializing</p></li>
+<li><p>Network connectivity issues</p></li>
+<li><p>Incorrect initial peers configuration</p></li>
+<li><p>DHT not synchronized</p></li>
+</ul>
+<p><strong>Solutions:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Wait longer (30-60 seconds) for DHT to synchronize</span>
+<span class="c1"># Check server logs for errors</span>
+tail<span class="w"> </span>-f<span class="w"> </span>logs/<span class="o">{</span>experiment_prefix<span class="o">}</span>/server_*.log
+
+<span class="c1"># Verify servers registered successfully</span>
+grep<span class="w"> </span><span class="s2">&quot;ReassignmentMonitorThread started for expert&quot;</span><span class="w"> </span>logs/<span class="o">{</span>experiment_prefix<span class="o">}</span>/server_*.log
+
+<span class="c1"># Check client discovery logs</span>
+grep<span class="w"> </span><span class="s2">&quot;Complete pipelines:&quot;</span><span class="w"> </span>logs/<span class="o">{</span>experiment_prefix<span class="o">}</span>/client.log
+
+<span class="c1"># Verify network connectivity</span>
+ping<span class="w"> </span>&lt;server_ip&gt;
+telnet<span class="w"> </span>&lt;server_ip&gt;<span class="w"> </span><span class="m">50500</span>
+</pre></div>
+</div>
+</section>
+<section id="cuda-out-of-memory">
+<h4>3. CUDA Out of Memory<a class="headerlink" href="#cuda-out-of-memory" title="Link to this heading">¶</a></h4>
+<p><strong>Symptom:</strong> <code class="docutils literal notranslate"><span class="pre">RuntimeError:</span> <span class="pre">CUDA</span> <span class="pre">out</span> <span class="pre">of</span> <span class="pre">memory</span></code></p>
+<p><strong>Solutions:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reduce batch size in config</span>
+diloco:
+<span class="w">  </span>batch_size_per_step:<span class="w"> </span><span class="m">32</span><span class="w">  </span><span class="c1"># Try smaller values: 16, 8, 4</span>
+
+<span class="c1"># Enable mixed precision (if not already)</span>
+data:
+<span class="w">  </span>precision:<span class="w"> </span><span class="s2">&quot;fp16-mixed&quot;</span>
+
+<span class="c1"># Use CPU for some servers (if needed)</span>
+python<span class="w"> </span>src/distqat/distributed/server.py<span class="w"> </span>--device<span class="w"> </span>cpu<span class="w"> </span>...
+</pre></div>
+</div>
+</section>
+<section id="slow-training-timeouts">
+<h4>4. Slow Training / Timeouts<a class="headerlink" href="#slow-training-timeouts" title="Link to this heading">¶</a></h4>
+<p><strong>Symptom:</strong> Forward/backward passes timing out, slow samples per second</p>
+<p><strong>Solutions:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Increase timeouts in config</span>
+<span class="nt">model_pipeline</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">forward_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180.0</span><span class="w">   </span><span class="c1"># Increase from 90.0</span>
+<span class="w">  </span><span class="nt">backward_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">360.0</span><span class="w">  </span><span class="c1"># Increase from 180.0</span>
+
+<span class="nt">diloco</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">averaging_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120.0</span><span class="w">  </span><span class="c1"># Increase from 60.0</span>
+</pre></div>
+</div>
+</section>
+<section id="wandb-authentication-errors">
+<h4>5. Wandb Authentication Errors<a class="headerlink" href="#wandb-authentication-errors" title="Link to this heading">¶</a></h4>
+<p><strong>Symptom:</strong> “wandb: ERROR Failed to authenticate”</p>
+<p><strong>Solution:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Login to WandB</span>
+wandb<span class="w"> </span>login
+</pre></div>
+</div>
+</section>
+<section id="checkpoint-loading-failures">
+<h4>6. Checkpoint Loading Failures<a class="headerlink" href="#checkpoint-loading-failures" title="Link to this heading">¶</a></h4>
+<p><strong>Symptom:</strong> “Failed to load checkpoint” or mismatched state dict</p>
+<p><strong>Solutions:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clear old checkpoints</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>checkpoints/<span class="o">{</span>experiment_prefix<span class="o">}</span>/*
+
+<span class="c1"># Verify checkpoint directory permissions</span>
+ls<span class="w"> </span>-la<span class="w"> </span>checkpoints/<span class="o">{</span>experiment_prefix<span class="o">}</span>/
+
+<span class="c1"># Check disk space</span>
+df<span class="w"> </span>-h
+</pre></div>
+</div>
+</section>
+</section>
+<section id="frequently-asked-questions">
+<h3>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Link to this heading">¶</a></h3>
+<section id="q-how-many-servers-do-i-need-for-training">
+<h4>Q: How many servers do I need for training?<a class="headerlink" href="#q-how-many-servers-do-i-need-for-training" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong> Minimum is one server per pipeline stage. For example, if your pipeline has 2 stages (front, back), you need at least 2 servers. Adding more servers (replicas) improves fault tolerance and convergence speed through data parallelism.</p>
+</section>
+<section id="q-can-i-mix-cpu-and-gpu-nodes">
+<h4>Q: Can I mix CPU and GPU nodes?<a class="headerlink" href="#q-can-i-mix-cpu-and-gpu-nodes" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong> Yes! You can specify <code class="docutils literal notranslate"><span class="pre">--device</span> <span class="pre">cpu</span></code> or <code class="docutils literal notranslate"><span class="pre">--device</span> <span class="pre">cuda</span></code> when starting servers. However, note that CPU nodes will be much slower and may become bottlenecks. Averaging may fail.</p>
+</section>
+<section id="q-how-does-automatic-failover-work">
+<h4>Q: How does automatic failover work?<a class="headerlink" href="#q-how-does-automatic-failover-work" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong> When a server fails:</p>
+<ol class="arabic simple">
+<li><p>Client detects missing stage for expert</p></li>
+<li><p>Client stops that experts trainer</p></li>
+<li><p>New servers automatically discover gaps via DHT</p></li>
+<li><p>New server loads parameters from peers and registers</p></li>
+<li><p>Client discovers new server and restarts the stopped trainer or spawns a new one</p></li>
+</ol>
+</section>
+<section id="q-what-happens-if-the-monitor-dies">
+<h4>Q: What happens if the monitor dies?<a class="headerlink" href="#q-what-happens-if-the-monitor-dies" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong> The monitor is primarily for metrics collection. If it dies, training continues but metrics won’t be logged to WandB. You can restart the monitor at any time.</p>
+</section>
+<section id="q-what-happens-if-the-client-dies">
+<h4>Q: What happens if the client dies?<a class="headerlink" href="#q-what-happens-if-the-client-dies" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong> Trainers will stop since they’re spawned by the client. Servers will remain running. Restart the client to resume training.</p>
+</section>
+<section id="q-can-i-change-the-config-during-training">
+<h4>Q: Can I change the config during training?<a class="headerlink" href="#q-can-i-change-the-config-during-training" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong> Some parameters can be changed by restarting trainers/servers (batch size, learning rates), but structural changes (pipeline stages, model architecture) require a full restart.</p>
+</section>
+<section id="q-what-s-the-difference-between-inner-steps-and-outer-steps">
+<h4>Q: What’s the difference between inner_steps and outer_steps?<a class="headerlink" href="#q-what-s-the-difference-between-inner-steps-and-outer-steps" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">inner_steps</span></code>: Local optimization steps between synchronization (higher = less communication)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">outer_steps</span></code>: Total number of synchronization rounds (outer_steps × inner_steps = total training steps)</p></li>
+</ul>
+</section>
+<section id="q-how-do-i-debug-connection-issues">
+<h4>Q: How do I debug connection issues?<a class="headerlink" href="#q-how-do-i-debug-connection-issues" title="Link to this heading">¶</a></h4>
+<p><strong>A:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Enable debug logging</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">HIVEMIND_VERBOSITY</span><span class="o">=</span>DEBUG
+
+<span class="c1"># Check DHT connectivity</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<span class="s2">from hivemind import DHT</span>
+<span class="s2">dht = DHT(start=True, initial_peers=[&#39;</span><span class="si">${</span><span class="nv">INITIAL_PEERS</span><span class="si">}</span><span class="s2">&#39;])</span>
+<span class="s2">print(dht.get_visible_maddrs())</span>
+<span class="s2">&quot;</span>
+
+<span class="c1"># Verify firewall rules</span>
+sudo<span class="w"> </span>ufw<span class="w"> </span>status
+sudo<span class="w"> </span>iptables<span class="w"> </span>-L
+
+<span class="c1"># Test port accessibility</span>
+nc<span class="w"> </span>-zv<span class="w"> </span>&lt;server_ip&gt;<span class="w"> </span><span class="m">50000</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="quick-fixes-reference">
+<h3>Quick Fixes Reference<a class="headerlink" href="#quick-fixes-reference" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Issue</p></th>
+<th class="head"><p>Quick Fix</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Leftover processes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pkill</span> <span class="pre">-f</span> <span class="pre">distqat</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Port in use</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kill</span> <span class="pre">-9</span> <span class="pre">$(lsof</span> <span class="pre">-t</span> <span class="pre">-i:50000)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>OOM errors</p></td>
+<td><p>Reduce <code class="docutils literal notranslate"><span class="pre">batch_size_per_step</span></code> in config</p></td>
+</tr>
+<tr class="row-odd"><td><p>WandB errors</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wandb</span> <span class="pre">login</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>DHT sync issues</p></td>
+<td><p>Wait 30-60s, check <code class="docutils literal notranslate"><span class="pre">initial_peers</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Checkpoint errors</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">-rf</span> <span class="pre">checkpoints/{exp_prefix}/*</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<hr class="docutils" />
+</section>
+</section>
+<section id="advanced-topics">
+<span id="id15"></span><h2>🔬 Advanced Topics<a class="headerlink" href="#advanced-topics" title="Link to this heading">¶</a></h2>
+<section id="adaptive-batch-sizing-for-heterogeneous-training">
+<h3>Adaptive Batch Sizing for Heterogeneous Training<a class="headerlink" href="#adaptive-batch-sizing-for-heterogeneous-training" title="Link to this heading">¶</a></h3>
+<p>Preview adaptive batch sizing to keep heterogeneous trainers in sync while using DiLoCo averaging. Batch sizes still require manual tuning, but the workflow below shows how to stage GPU- and CPU-based servers so that throughput stays aligned. In the future this will be done automatically.</p>
+<ol class="arabic">
+<li><p><strong>Trainer + monitor host</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PUBLIC_IP</span><span class="o">=</span>&lt;trainer_public_ip&gt;
+wandb<span class="w"> </span>login
+python<span class="w"> </span>start_trainer_client.py<span class="w"> </span>--public-ip<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">PUBLIC_IP</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>Copy the peer addresses written to <code class="docutils literal notranslate"><span class="pre">logs/&lt;experiment_prefix&gt;/initial_peers.txt</span></code>.</p>
+</li>
+<li><p><strong>Server host with GPU</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">INITIAL_PEERS</span><span class="o">=</span><span class="s1">&#39;/ip4/&lt;trainer_public_ip&gt;/tcp/50000/p2p/&lt;peer_id&gt;&#39;</span>
+python<span class="w"> </span>start_servers.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--public-ip<span class="w"> </span><span class="s2">&quot;&lt;this_server_ip&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--num-servers<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--initial-peers<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INITIAL_PEERS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config-path<span class="w"> </span><span class="s2">&quot;configs/resnet18.yaml&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Server host with CPU</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">INITIAL_PEERS</span><span class="o">=</span><span class="s1">&#39;/ip4/&lt;trainer_public_ip&gt;/tcp/50000/p2p/&lt;peer_id&gt;&#39;</span>
+python<span class="w"> </span>start_servers.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--public-ip<span class="w"> </span><span class="s2">&quot;&lt;this_server_ip&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--num-servers<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--initial-peers<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">INITIAL_PEERS</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config-path<span class="w"> </span><span class="s2">&quot;configs/resnet18.yaml&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--diloco-batch-size-per-step<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--device<span class="w"> </span>cpu
+</pre></div>
+</div>
+<p>Monitor the logs to confirm that both servers report similar step times, indicating that the batch sizes are balancing performance across heterogeneous hardware.</p>
+</li>
+</ol>
+</section>
+<section id="custom-models">
+<h3>Custom Models<a class="headerlink" href="#custom-models" title="Link to this heading">¶</a></h3>
+<p>To add a new model architecture:</p>
+<ol class="arabic simple">
+<li><p>Create model file in <code class="docutils literal notranslate"><span class="pre">src/distqat/models/</span></code>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># src/distqat/models/mymodel.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">head_sample_input</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">parameters</span><span class="o">&gt;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">...</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tail_sample_input</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">parameters</span><span class="o">&gt;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">...</span>
+
+<span class="nd">@register_expert_class</span><span class="p">(</span><span class="s2">&quot;mymodel.full&quot;</span><span class="p">,</span> <span class="n">head_sample_input</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModelFull</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Full model definition</span>
+        
+<span class="nd">@register_expert_class</span><span class="p">(</span><span class="s2">&quot;mymodel.head&quot;</span><span class="p">,</span> <span class="n">head_sample_input</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModelHead</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># First stage</span>
+
+<span class="nd">@register_expert_class</span><span class="p">(</span><span class="s2">&quot;mymodel.tail&quot;</span><span class="p">,</span> <span class="n">tail_sample_input</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModelTail</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># Last stage</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Register in <code class="docutils literal notranslate"><span class="pre">src/distqat/models/__init__.py</span></code>:</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.mymodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyModelFull</span><span class="p">,</span> <span class="n">MyModelHead</span><span class="p">,</span> <span class="n">MyModelTail</span>
+
+<span class="n">MODEL_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># ... existing models ...</span>
+    <span class="s2">&quot;mymodel.full&quot;</span><span class="p">:</span> <span class="n">MyModelFull</span><span class="p">,</span>
+    <span class="s2">&quot;mymodel.head&quot;</span><span class="p">:</span> <span class="n">MyModelHead</span><span class="p">,</span>
+    <span class="s2">&quot;mymodel.tail&quot;</span><span class="p">:</span> <span class="n">MyModelTail</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Create config file <code class="docutils literal notranslate"><span class="pre">configs/mymodel.yaml</span></code> and run!</p></li>
+</ol>
+</section>
+<section id="quantization">
+<h3>Quantization<a class="headerlink" href="#quantization" title="Link to this heading">¶</a></h3>
+<p>Disable quantization:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>start_servers.py<span class="w"> </span>--disable-quant<span class="w"> </span>...
+</pre></div>
+</div>
+</section>
+<section id="custom-optimizers">
+<h3>Custom Optimizers<a class="headerlink" href="#custom-optimizers" title="Link to this heading">¶</a></h3>
+<p>DistQat supports custom inner and outer optimizers:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">diloco</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">inner_optim</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;adamw&quot;</span>
+<span class="w">    </span><span class="nt">adam_lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1e-4</span>
+<span class="w">    </span><span class="nt">adam_weight_decay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.01</span>
+<span class="w">  </span><span class="nt">outer_optim</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sgd&quot;</span><span class="w">    </span><span class="c1"># Typically SGD with momentum for outer loop</span>
+<span class="w">    </span><span class="nt">sgd_lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">    </span><span class="nt">sgd_momentum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.9</span>
+<span class="w">    </span><span class="nt">sgd_nesterov</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+<section id="parameter-mirroring-checkpointing">
+<h3>Parameter Mirroring &amp; Checkpointing<a class="headerlink" href="#parameter-mirroring-checkpointing" title="Link to this heading">¶</a></h3>
+<p>Configure checkpoint frequency and location:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">param_mirror</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">refresh_every</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"> </span><span class="c1"># save every 30 seconds</span>
+<span class="w">  </span><span class="nt">checkpoint_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;checkpoints/myexp&quot;</span>
+</pre></div>
+</div>
+<p>Checkpoints include:</p>
+<ul class="simple">
+<li><p>Model parameters for each stage</p></li>
+<li><p>Optimizer states (inner and outer)</p></li>
+<li><p>Training step counter</p></li>
+<li><p>Random states for reproducibility</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+</section>
+<section id="citations">
+<span id="id16"></span><h2>📚 Citations<a class="headerlink" href="#citations" title="Link to this heading">¶</a></h2>
+<p>If you use DistQat in your research, please cite the frameworks it builds upon:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">ryabinin2021towards</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="p">=</span><span class="s">{Towards Crowdsourced Training of Large Neural Networks using Decentralized Mixture-of-Experts}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="p">=</span><span class="s">{Ryabinin, Max and Gusev, Anton}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">booktitle</span><span class="p">=</span><span class="s">{NeurIPS 2020 Workshop on Pre-registration in Machine Learning}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="p">=</span><span class="s">{2020}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">ryabinin2023swarm</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="p">=</span><span class="s">{{SWARM} Parallelism: Training Large Models Can Be Surprisingly Communication-Efficient}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="p">=</span><span class="s">{Ryabinin, Max and Dettmers, Tim and Diskin, Michael and Borzunov, Alexander}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">booktitle</span><span class="p">=</span><span class="s">{Proceedings of the 40th International Conference on Machine Learning}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">pages</span><span class="p">=</span><span class="s">{29416--29440}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="p">=</span><span class="s">{2023}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@misc</span><span class="p">{</span><span class="nl">jaghouar2024opendiloco</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="p">=</span><span class="s">{OpenDiLoCo: An Open-Source Framework for Globally Distributed Low-Communication Training}</span><span class="p">,</span><span class="w"> </span>
+<span class="w">  </span><span class="na">author</span><span class="p">=</span><span class="s">{Sami Jaghouar and Jack Min Ong and Johannes Hagemann}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="p">=</span><span class="s">{2024}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">eprint</span><span class="p">=</span><span class="s">{2407.07852}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">archivePrefix</span><span class="p">=</span><span class="s">{arXiv}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">primaryClass</span><span class="p">=</span><span class="s">{cs.LG}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+<section id="acknowledgements">
+<span id="id17"></span><h2>🙏 Acknowledgements<a class="headerlink" href="#acknowledgements" title="Link to this heading">¶</a></h2>
+<p>DistQat is built upon the following open-source projects:</p>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="https://github.com/learning-at-home/hivemind">Hivemind</a></strong>: Decentralized deep learning framework</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/yandex-research/swarm">SWARM Parallelism</a></strong>: Communication-efficient training protocols</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/PrimeIntellect-ai/OpenDiLoCo">OpenDiLoCo</a></strong>: Distributed Low-Communication optimization</p></li>
+<li><p><strong><a class="reference external" href="https://pytorch.org/">PyTorch</a></strong>: Deep learning framework</p></li>
+<li><p><strong><a class="reference external" href="https://wandb.ai/">WandB</a></strong>: Experiment tracking and visualization</p></li>
+</ul>
+<p>Special thanks to the authors and maintainers of these projects for making decentralized AI training accessible.</p>
+<hr class="docutils" />
+</section>
+<section id="contact">
+<span id="id18"></span><h2>📧 Contact<a class="headerlink" href="#contact" title="Link to this heading">¶</a></h2>
+<p>For questions, issues, or collaboration opportunities, please:</p>
+<ul class="simple">
+<li><p>Open an issue on GitHub</p></li>
+<li><p>Contact the maintainers</p></li>
+</ul>
+<hr class="docutils" />
+<div align="center">
+<p><strong>Made with ❤️ for decentralized AI</strong></p>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">DistQat</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="DOCUMENTATION_INDEX.html">Index</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Documentation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QUICK_START.html">Quick Start Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Deployment Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOYMENT.html">Setup/Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SKYPILOT_SERVER_SETUP.html">Skypilot server setup template</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Architecture Diagrams</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/ARCHITECTURE.html">Architecture Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/NODE_ARRANGEMENT.html">Node Arrangement Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/TRAINING_FLOW.html">Training Flow Diagram</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagrams/FAILOVER.html">Failover Mechanism Diagram</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="DOCUMENTATION_INDEX.html" title="previous chapter">Index</a></li>
+      <li>Next: <a href="QUICK_START.html" title="next chapter">Quick Start Guide</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, SEMRON Team.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
